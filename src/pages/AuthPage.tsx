@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 import logo from "@/assets/PaulaViagensLogo.png";
 
@@ -7,7 +8,7 @@ import CampoInput from "@/components/auth/CampoInput";
 
 
 export default function AuthPage() {
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   
   const location = useLocation();
   const isLogin = location.pathname === '/login'; 
@@ -59,13 +60,13 @@ export default function AuthPage() {
   }
 
   return (
-    <div className={`w-screen h-[70%] flex justify-center items-center bg-cover bg-center bg-fixed 
+    <div className={`w-screen h-[100%] flex justify-center items-center bg-cover bg-center bg-fixed 
       ${isLogin 
         ? "bg-gradient-to-br from-[#e6f4ff] via-[#d6efff] to-[#cde8ff]" 
         : "bg-gradient-to-br from-[#fff4e6] via-[#ffe6cc] to-[#ffebd6]"
       }`}
     >
-      
+      <FaArrowLeft size={32} className="absolute top-10 left-10 cursor-pointer" onClick={() => navigate('/')}/>
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-5xl gap-8 p-4">
         
         
@@ -99,7 +100,6 @@ export default function AuthPage() {
                 required 
               />
             )}
-            
             <button 
               type="submit" 
               className={`w-full py-3 rounded-lg cursor-pointer text-lg font-bold mt-3 transition duration-300 active:scale-[0.98] text-white ${buttonClasses}`}

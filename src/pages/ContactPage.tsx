@@ -2,7 +2,7 @@ import logo from "@/assets/PaulaViagensLogo.png";
 
 export default function ContactPage() {
   return (
-    <div className="h-[70%] flex flex-col bg-white">
+    <div className="h-[95%] flex flex-col bg-white">
       <section className="h-[50%] flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto px-6 py-20 gap-10">
         
         <div className="flex flex-col space-y-6 md:w-1/2">
@@ -52,11 +52,11 @@ export default function ContactPage() {
   
           </form>
 
-          <div className="flex items-center justify-center w-full md:w-1/2">
+          <div className="flex justify-center md:w-1/2">
             <img
               src={logo}
-              alt="Logo"
-              className="max-w-[250px] md:max-w-[320px] object-contain"
+              alt="Equipe de atendimento"
+              className="max-w-[350px] rounded-xl shadow-lg object-contain p-2"
             />
           </div>
         </div>

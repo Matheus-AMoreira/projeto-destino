@@ -3,7 +3,8 @@ import Card from '@/components/landingPage/Card';
 import ubatubaImg from '@/assets/Ubatuba.jpg';
 import paratyImg from '@/assets/Paraty.jpg';
 import noronhaImg from '@/assets/Noronha.jpg';
-import destaqueImage from '@/assets/Destaque.jpg'; 
+import destaqueImage from '@/assets/Destaque.jpg';
+import Footer from '@/components/Footer';
 
 export default function LandingPage() {
   const packagesData = [
@@ -28,7 +29,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className='flex-col min-h-screen flex bg-gradient-to-br from-white to-sky-200'>
+    <div className='flex-col pb-10 flex bg-gradient-to-br from-white to-sky-200'>
       <main className='flex-grow h-fit justify-evenly flex-col p-4 pl-3 pr-3'>
         
         <section className="flex items-center flex-wrap pt-4">
