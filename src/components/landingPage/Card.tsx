@@ -11,7 +11,7 @@ export default function Card({ title, description, imageUrl } : {title: string, 
       )}
 
       <div className="p-4 h-[300px] flex flex-col justify-evenly">
-        <h3 className="mb-2">{title}</h3>
+        <h3 className="mb-2 text-2xl font-bold">{title}</h3>
         
         <p className="text-base mb-4 text-shadow-black">
           {description}

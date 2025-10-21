@@ -3,11 +3,11 @@ import logo from "@/assets/PaulaViagensLogo.png";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-gradient-to-r from-[#ffc27a] to-[#ff9e3f] text-blue-800 py-10 px-8 mt-20">
+    <footer className="w-full bg-gradient-to-r from-[#ffc27a] to-[#ff9e3f] text-blue-800 py-10 px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
         
         
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start ">
           <img
             src={logo}
             alt="Logo"

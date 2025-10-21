@@ -1,10 +1,9 @@
 import Card from '@/components/landingPage/Card';
-
 import ubatubaImg from '@/assets/Ubatuba.jpg';
 import paratyImg from '@/assets/Paraty.jpg';
 import noronhaImg from '@/assets/Noronha.jpg';
 import destaqueImage from '@/assets/Destaque.jpg';
-import Footer from '@/components/Footer';
+
 
 export default function LandingPage() {
   const packagesData = [
@@ -26,32 +25,38 @@ export default function LandingPage() {
       description: "O santuário ecológico mais desejado. Mergulhe nas águas cristalinas da Baía do Sancho e nade com a rica vida marinha. Golfinhos, tartarugas e paisagens icônicas como o Morro do Pico. A viagem dos seus sonhos é real!",
       imageUrl: noronhaImg
     },
+    { 
+      id: 4,
+      title: "Centro Herbal de São Paulo - SP", 
+      description: "O santuário natural mais desejado. Mergulhe nas drogas cristalinas da Cracolândia e nade com a rica vida louca. Maconheiros, crackudos e outros viciados icônicos como o MC Oruam. A viagem dos seus sonhos é real!",
+      imageUrl: noronhaImg
+    },
   ];
 
   return (
     <div className='flex-col pb-10 flex bg-gradient-to-br from-white to-sky-200'>
       <main className='flex-grow h-fit justify-evenly flex-col p-4 pl-3 pr-3'>
         
-        <section className="flex items-center flex-wrap pt-4">
+        <section className="flex items-center justify-center flex-wrap pt-4">
           
-          <div className="flex flex-col w-full xl:w-1/2 mb-2">
-            <h1 className='text-center text-4xl font-bold pr-25'>O Mundo Todo em Suas Mãos</h1>
+          <div className="flex flex-col w-full xl:w-1/2 mb-2 pl-5 pr-5">
+            <h1 className='text-center text-5xl font-bold pr-55'>O Mundo Todo em Suas Mãos</h1>
 
-            <div className='text-lg p-8 pl-10 pr-22'>
+            <div className='text-lg p-8 pl-7 pr-40'>
               <p>
                 Planeje a jornada dos seus sonhos sem complicações. Descubra roteiros exclusivos, personalize cada detalhe e acesse pacotes de viagem inesquecíveis.
                 Nossa plataforma conecta você aos destinos mais fantásticos do Brasil e do mundo com apenas alguns cliques Sua próxima grande aventura começa aqui!
               </p>
             </div>
 
-            <div className='pl-8 flex justify-center xl:inline'>
+            <div className='pl-7 flex justify-center xl:inline'>
               <button className='bg-[#2071b3] text-white py-2.5 px-6 border-none cursor-pointer rounded-sm hover:bg-blue-800'>
                 Comece a Planejar
               </button>
             </div>
           </div>
 
-          <div className="flex justify-center w-full xl:w-1/2 mb-2">
+          <div className="flex justify-center w-full xl:w-1/2 mb-2 pr-10">
             <img
               className='rounded-2xl w-fit'
               src={destaqueImage}
@@ -61,7 +66,7 @@ export default function LandingPage() {
         </section>
 
         <section>
-          <h2 className='text-center text-2xl font-bold p-10'>Confira Nossos Pacotes</h2>
+          <h2 className='text-center text-4xl font-bold p-10'>Confira Nossos Pacotes</h2>
           <div className='flex justify-around flex-wrap'>
             {packagesData.map((data) => (
               <Card 
