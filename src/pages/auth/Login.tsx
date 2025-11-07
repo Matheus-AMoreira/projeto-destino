@@ -1,44 +1,39 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import CampoInput from "@/components/auth/CampoInput";
-import AuthModal from "@/components/auth/AuthModal";
+import AuthModal, { type Modal } from "@/components/auth/AuthModal";
 import AuthLogo from "@/components/auth/AuthLogo";
-import { setCookie } from "@/utils/cookieHandler";
 import { ROUTES } from "@/paths";
+import { loginUsuario } from "@/utils/authFunctions";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalMsg, setModalMsg] = useState("");
+  const [modal, setModal] = useState<Modal>({
+    show: false,
+    msg: "",
+    url: null,
+  });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    const carregarUser = () => {
-      try {
-        const user = localStorage.getItem(
-          `User:${email.toLowerCase().split("@")[0]}`
-        );
-        return user ? JSON.parse(user) : null;
-      } catch (error) {
-        console.log("Erro ao fazer login: ", error);
-        return null;
+  const handleSubmit = async () => {
+    try {
+      const response = await loginUsuario({ email, senha });
+      console.log(response);
+      if (response.error) {
+        setModal({ show: true, msg: response.mensagem, url: null });
       }
-    };
 
-    const user = carregarUser();
-
-    if (email == user.email && senha == user.senha) {
-      setModalMsg("Login Efetuado!");
-      setShowModal(true);
-      setCookie("session", user.email, 30);
-      setEmail("");
-      setSenha("");
-    } else {
-      alert("Email ou senha incorreta!");
+      if (!response.error) {
+        setModal({
+          show: true,
+          msg: response.mensagem,
+          url: ROUTES.LANDINGPAGE,
+        });
+      }
+    } catch (error) {
+      console.log("Erro ao fazer login: ", error);
     }
   };
 
@@ -55,7 +50,7 @@ export default function Login() {
         >
           <h1 className="text-[#333] mb-8 text-3xl font-bold">Conecte-se</h1>
 
-          <form onSubmit={handleSubmit}>
+          <form>
             <CampoInput
               label="E-mail"
               type="email"
@@ -76,7 +71,8 @@ export default function Login() {
             />
 
             <button
-              type="submit"
+              onClick={() => handleSubmit()}
+              type="button"
               className={`w-full py-3 rounded-lg cursor-pointer text-lg font-bold mt-3 transition 
                 duration-300 active:scale-[0.98] text-white bg-[#2071b3] hover:bg-[#1a5b8e]`}
             >
@@ -98,13 +94,7 @@ export default function Login() {
         <AuthLogo />
       </div>
 
-      {showModal && (
-        <AuthModal
-          setShowModal={setShowModal}
-          modalMsg={modalMsg}
-          url={ROUTES.LANDINGPAGE}
-        />
-      )}
+      {modal.show && <AuthModal setModal={setModal} modalData={modal} />}
     </div>
   );
 }

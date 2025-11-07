@@ -1,5 +1,5 @@
 import { ROUTES } from "@/paths";
-import { getCookie, setCookie } from "@/utils/cookieHandler";
+import { useSession } from "@/store/usuarioStore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -7,20 +7,14 @@ export default function Navbar() {
   const [user, setUser] = useState<string | null>();
 
   useEffect(() => {
-    const sessionEmail = getCookie("session");
-
-    if (sessionEmail) {
-      setUser(sessionEmail);
-    } else {
-      setUser(null);
-    }
+    setUser(useSession.getState().email);
   }, []);
 
   return (
-    <header className="flex flex-wrap  items-center place-content-between py-[15px] px-[30px] bg-[var(--bg-color-orange)]">
+    <header className="flex flex-wrap  items-center place-content-between py-[15px] px-[30px] bg-(--bg-color-orange)">
       <Link
         to={ROUTES.LANDINGPAGE}
-        className="font-bold text-2xl text-[var(--navbar-blue-text)]"
+        className="font-bold text-2xl text-(--navbar-blue-text)"
       >
         DESTINO
       </Link>
@@ -50,8 +44,8 @@ export default function Navbar() {
             <button
               className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer"
               onClick={() => {
-                setCookie("session", "", -1);
                 setUser(null);
+                useSession.getState().logoutUser();
               }}
             >
               logout
