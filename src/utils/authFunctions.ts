@@ -1,0 +1,92 @@
+import { useSession } from "@/store/usuarioStore";
+
+export interface Usuario {
+  nome?: string;
+  sobreNome?: string;
+  cpf?: string;
+  email?: string;
+  telefone?: string;
+  senha?: string;
+}
+
+interface RegistrationResponse {
+  error: boolean;
+  mensagem: string;
+}
+
+export const cadastrarUsuario = async (
+  usuario: Usuario | null
+): Promise<RegistrationResponse> => {
+  if (usuario) {
+    try {
+      const response = await fetch("http://localhost:8080/api/auth/singup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(usuario),
+      });
+
+      return await response.json();
+    } catch (error: unknown) {
+      return { error: true, mensagem: "Erro inesperado!" };
+    }
+  }
+  return { error: true, mensagem: "Usuário inválido" };
+};
+
+export interface LoginRequest {
+  email: string;
+  senha: string;
+}
+
+interface LoginResponse {
+  error: boolean;
+  mensagem: string;
+  userInfo?: UserInfo;
+}
+
+export interface UserInfo {
+  id: string;
+  nome: string;
+}
+
+export const loginUsuario = async (
+  credenciaisUsuario: LoginRequest
+): Promise<LoginResponse> => {
+  try {
+    const response = await fetch("https://localhost:8080/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(credenciaisUsuario),
+    });
+    const result: LoginResponse = await response.json();
+    if (result.userInfo) {
+      useSession.getState().updateUser({
+        id: result.userInfo.id,
+        email: result.userInfo.nome,
+        isLoged: true,
+      });
+      return { error: result.error, mensagem: result.mensagem };
+    }
+    return { error: result.error, mensagem: result.mensagem };
+  } catch (error: unknown) {
+    return { error: true, mensagem: "Erro inesperado!" };
+  }
+};
+
+export const logout = async (): Promise<string> => {
+  try {
+    const response = await fetch("https://localhost:8080/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    const result: string = await response.json();
+    return result;
+  } catch (error: unknown) {
+    return "erro";
+  }
+};

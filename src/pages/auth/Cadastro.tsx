@@ -1,51 +1,38 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import CampoInput from "@/components/auth/CampoInput";
-import AuthModal from "@/components/auth/AuthModal";
+import AuthModal, { type Modal } from "@/components/auth/AuthModal";
 import AuthLogo from "@/components/auth/AuthLogo";
 import { ROUTES } from "@/paths";
+import { cadastrarUsuario, type Usuario } from "@/utils/authFunctions";
 
 export default function Cadastro() {
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
-  const [confirmar, setConfirmar] = useState("");
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [confirmarSenha, setConfirmarSenha] = useState("");
 
-  const [showModal, setShowModal] = useState(false);
-  const [modalMsg, setModalMsg] = useState("");
+  const [modal, setModal] = useState<Modal>({
+    show: false,
+    msg: "",
+    url: null,
+  });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (senha !== confirmar) {
-      setModalMsg("As senhas não coincidem!");
-      setShowModal(true);
-      return;
+  const handleSubmit = async () => {
+    if (usuario?.senha !== confirmarSenha) {
+      setModal({ show: true, msg: "As senhas não coincidem!", url: null });
     }
 
-    const cadastrarUser = () => {
-      try {
-        localStorage.setItem(
-          `User:${email.toLowerCase().split("@")[0]}`,
-          JSON.stringify({ email: email, senha: senha })
-        );
-        return true;
-      } catch (error) {
-        console.log("Erro ao fazer login: ", e);
-        return false;
-      }
-    };
+    const response = await cadastrarUsuario(usuario);
 
-    const result = cadastrarUser();
-
-    if (result) {
-      setModalMsg("Cadastro efetuado com sucesso!");
-      setShowModal(true);
-      setEmail("");
-      setSenha("");
-      setConfirmar("");
+    if (response.error) {
+      setModal({ show: true, msg: "erro ao cadastrar usuário!", url: null });
     } else {
-      alert("erro ao cadastrar usuário!");
+      setModal({
+        show: true,
+        msg: "Cadastro efetuado com sucesso!\n Agora espere o email da administração com a confirmação",
+        url: ROUTES.LANDINGPAGE,
+      });
+      setUsuario(null);
     }
   };
 
@@ -64,10 +51,56 @@ export default function Cadastro() {
 
           <form onSubmit={handleSubmit}>
             <CampoInput
+              label="Nome"
+              type="text"
+              value={usuario?.nome}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, nome: e.target.value }))
+              }
+              required
+              minLength={3}
+              maxLength={20}
+            />
+            <CampoInput
+              label="SobreNome"
+              type="text"
+              value={usuario?.sobreNome}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, sobreNome: e.target.value }))
+              }
+              required
+              minLength={3}
+              maxLength={20}
+            />
+            <CampoInput
+              label="cpf"
+              type="text"
+              value={usuario?.cpf}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, cpf: e.target.value }))
+              }
+              required
+              minLength={8}
+              maxLength={100}
+            />
+            <CampoInput
               label="E-mail"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={usuario?.email}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, email: e.target.value }))
+              }
+              required
+              minLength={3}
+              maxLength={100}
+            />
+            <CampoInput
+              label="Telefone"
+              type="text"
+              value={usuario?.telefone}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, telefone: e.target.value }))
+              }
               required
               minLength={3}
               maxLength={100}
@@ -75,25 +108,27 @@ export default function Cadastro() {
             <CampoInput
               label="Senha"
               type="password"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
+              value={usuario?.senha}
+              onChange={(e) =>
+                setUsuario((user) => ({ ...user, senha: e.target.value }))
+              }
               required
               minLength={8}
               maxLength={100}
             />
-
             <CampoInput
-              label="Confirmar Senha"
+              label="SenhaConfirmar"
               type="password"
-              value={confirmar}
-              onChange={(e) => setConfirmar(e.target.value)}
+              value={confirmarSenha}
+              onChange={(e) => setConfirmarSenha(e.target.value)}
               required
               minLength={8}
               maxLength={100}
             />
 
             <button
-              type="submit"
+              type="button"
+              onClick={() => handleSubmit()}
               className={`w-full py-3 rounded-lg cursor-pointer text-lg font-bold mt-3 
                 transition duration-300 active:scale-[0.98] text-white bg-[#ff7300] hover:bg-[#cc5c00]`}
             >
@@ -115,13 +150,7 @@ export default function Cadastro() {
         <AuthLogo />
       </div>
 
-      {showModal && (
-        <AuthModal
-          setShowModal={setShowModal}
-          modalMsg={modalMsg}
-          url={ROUTES.LOGIN}
-        />
-      )}
+      {modal.show && <AuthModal setModal={setModal} modalData={modal} />}
     </div>
   );
 }
