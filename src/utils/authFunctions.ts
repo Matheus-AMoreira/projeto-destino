@@ -10,6 +10,7 @@ export interface Usuario {
   valido: boolean;
   atualização: string;
   cadastro: string;
+  senha: string;
 }
 
 export interface RegistroUser {
@@ -31,7 +32,7 @@ export const cadastrarUsuario = async (
 ): Promise<RegistrationResponse> => {
   if (usuario) {
     try {
-      const response = await fetch("http://localhost:8080/api/auth/singup", {
+      const response = await fetch("api/auth/singup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,7 +68,7 @@ export const loginUsuario = async (
   credenciaisUsuario: LoginRequest
 ): Promise<LoginResponse> => {
   try {
-    const response = await fetch("https://localhost:8080/api/auth/login", {
+    const response = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +93,7 @@ export const loginUsuario = async (
 
 export const logout = async (): Promise<string> => {
   try {
-    const response = await fetch("https://localhost:8080/api/auth/logout", {
+    const response = await fetch("api/auth/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -111,12 +112,9 @@ export interface InvalidUsersResponse {
 
 export const listInvalidUsers = async (): Promise<InvalidUsersResponse> => {
   try {
-    const response = await fetch(
-      "https://localhost:8080/api/auth/usuarios/invalidos",
-      {
-        credentials: "include",
-      }
-    );
+    const response = await fetch("api/auth/usuarios/invalidos", {
+      credentials: "include",
+    });
 
     if (!response.ok) {
       return {
@@ -149,13 +147,10 @@ export const ValidarUsuario = async (
   userId: string
 ): Promise<ValidarUsuarioResponse> => {
   try {
-    const response = await fetch(
-      `https://localhost:8080/api/auth/usuarios/validar/${userId}`,
-      {
-        method: "PATCH",
-        credentials: "include",
-      }
-    );
+    const response = await fetch(`api/auth/usuarios/validar/${userId}`, {
+      method: "PATCH",
+      credentials: "include",
+    });
 
     if (!response.ok) {
       return {
