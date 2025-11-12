@@ -11,8 +11,9 @@ import App from "./App";
 import Cadastro from "./pages/auth/Cadastro";
 import Login from "./pages/auth/Login";
 import Viagem from "./pages/viagen/Viagem";
-import Relatorio from "./pages/relatorio/Relatorio";
-import Validar from "./pages/validar/validar";
+import ViagensCadastradas from "./pages/relatorio/ViagensCadastradas";
+import Relatorio from "./pages/relatorio/Dashboard";
+import Validar from "./pages/validar/Validar";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: ROUTES.VIAGEM,
         element: <Viagem />,
+      },
+      {
+        path: ROUTES.VIAGENS_CADASTRADAS,
+        element: <ViagensCadastradas />,
       },
       {
         path: ROUTES.RELATORIO,
