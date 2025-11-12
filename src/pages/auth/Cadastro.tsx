@@ -17,6 +17,12 @@ export default function Cadastro() {
     url: null,
   });
 
+  const montarUsuario = (campo: keyof Usuario, valor: string) => {
+    if (usuario) {
+      setUsuario({ ...usuario, [campo]: valor } as Usuario);
+    }
+  };
+
   const handleSubmit = async () => {
     if (usuario?.senha !== confirmarSenha) {
       setModal({ show: true, msg: "As senhas não coincidem!", url: null });
@@ -38,9 +44,9 @@ export default function Cadastro() {
 
   return (
     <div
-      className={`bg-[url('/assets/fundoCadastro.jpg')] w-screen h-screen flex justify-center items-center bg-cover bg-center bg-fixed 
-      "bg-gradient-to-br from-[#fff4e6] via-[#ffe6cc] to-[#ffebd6]"
-      }`}
+      className={
+        "w-screen h-screen flex justify-center items-center bg-cover bg-center bg-fixed bg-linear-to-br from-[#fff6ea] via-[#ffffff] to-[#fff6ea]"
+      }
     >
       <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-5xl gap-8 p-4">
         <div
@@ -54,9 +60,7 @@ export default function Cadastro() {
               label="Nome"
               type="text"
               value={usuario?.nome}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, nome: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("nome", e.target.value)}
               required
               minLength={3}
               maxLength={20}
@@ -65,9 +69,7 @@ export default function Cadastro() {
               label="SobreNome"
               type="text"
               value={usuario?.sobreNome}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, sobreNome: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("sobreNome", e.target.value)}
               required
               minLength={3}
               maxLength={20}
@@ -76,9 +78,7 @@ export default function Cadastro() {
               label="cpf"
               type="text"
               value={usuario?.cpf}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, cpf: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("cpf", e.target.value)}
               required
               minLength={8}
               maxLength={100}
@@ -87,9 +87,7 @@ export default function Cadastro() {
               label="E-mail"
               type="email"
               value={usuario?.email}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, email: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("email", e.target.value)}
               required
               minLength={3}
               maxLength={100}
@@ -98,9 +96,7 @@ export default function Cadastro() {
               label="Telefone"
               type="text"
               value={usuario?.telefone}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, telefone: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("telefone", e.target.value)}
               required
               minLength={3}
               maxLength={100}
@@ -109,9 +105,7 @@ export default function Cadastro() {
               label="Senha"
               type="password"
               value={usuario?.senha}
-              onChange={(e) =>
-                setUsuario((user) => ({ ...user, senha: e.target.value }))
-              }
+              onChange={(e) => montarUsuario("senha", e.target.value)}
               required
               minLength={8}
               maxLength={100}

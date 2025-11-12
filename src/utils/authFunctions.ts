@@ -15,12 +15,12 @@ export interface Usuario {
 }
 
 export interface RegistroUser {
-  nome?: string;
-  sobreNome?: string;
-  cpf?: string;
-  email?: string;
-  telefone?: string;
-  senha?: string;
+  nome: string;
+  sobreNome: string;
+  cpf: string;
+  email: string;
+  telefone: string;
+  senha: string;
 }
 
 interface RegistrationResponse {

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logo from "/assets/paulaViagensLogo.png";
+import logo from "/assets/icon.png";
 
 export default function Footer() {
   return (

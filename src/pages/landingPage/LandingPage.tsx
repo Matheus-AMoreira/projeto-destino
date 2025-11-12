@@ -1,41 +1,9 @@
-import { useEffect, useState } from "react";
-
 import Card from "@/components/landingPage/Card";
-
 import destaqueImage from "/assets/destaque.jpg";
-
-interface CardProps {
-  id: number;
-  title: string;
-  description: string;
-  imageUrl: string;
-}
+import { usePacotes } from "@/utils/buscarFunctions";
 
 export default function LandingPage() {
-  const [pacotes, setPacotes] = useState<CardProps[]>([]);
-
-  const getPacotes = async () => {
-    try {
-      const response = await fetch("/json/pacotes.json");
-
-      if (!response.ok) {
-        throw new Error(
-          `Erro HTTP: Status ${response.status}. Verifique o caminho`
-        );
-      }
-
-      const data: CardProps[] = await response.json();
-
-      setPacotes(data);
-    } catch (err) {
-      console.error("Falha ao carregar dados dos cards:", err);
-      setPacotes([]);
-    }
-  };
-
-  useEffect(() => {
-    getPacotes();
-  }, []);
+  const { pacotes } = usePacotes();
 
   return (
     <div className="flex flex-col min-h-screen bg-linear-to-br from-white to-sky-200">

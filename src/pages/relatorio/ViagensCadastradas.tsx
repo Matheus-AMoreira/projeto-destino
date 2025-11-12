@@ -1,35 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
-import { useEffect, useState } from "react";
-
-export interface PacoteViagem {
-  id: number;
-  nome: string;
-  descricao: string;
-  itens: string[];
-  valor: number;
-}
+import { useViagens } from "@/utils/buscarFunctions";
 
 export default function ViagensCadastradas() {
-  const [viagens, setViagens] = useState<PacoteViagem[]>([]);
+  const { viagens } = useViagens();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const getPacotes = async () => {
-    try {
-      const response = await fetch("/json/viagens.json");
-      const result: PacoteViagem[] = await response.json();
-      console.log(result);
-      setViagens(result);
-    } catch (error) {
-      console.error("Erro ao carregar os dados do JSON:", error);
-      throw new Error(`Não foi possível carregar os pacotes do arquivo.`);
-    }
-  };
-
-  useEffect(() => {
-    getPacotes();
-  }, []);
 
   const formatarValor = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -48,7 +24,6 @@ export default function ViagensCadastradas() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Barra Lateral */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900">Logo</h1>
