@@ -1,58 +1,28 @@
+import { BarChartComponent } from "@/components/relatorio/BarChartComponent";
+import { PieChartComponent } from "@/components/relatorio/PieChartComponent";
+import { ROUTES } from "@/paths";
+import { useDashboardData } from "@/utils/useDashboardData";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ROUTES } from "../../paths";
-import {
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
 
-const dadosPizza1 = [
-  { name: "Concluídas", value: 75 },
-  { name: "Em Andamento", value: 15 },
-  { name: "Canceladas", value: 10 },
-];
-
-const dadosPizza2 = [
-  { name: "Econômica", value: 45 },
-  { name: "Executiva", value: 30 },
-  { name: "Primeira Classe", value: 25 },
-];
-
-const dadosBarra1 = [
-  { mes: "Jan", ipsum: 45, lorem: 35 },
-  { mes: "Fev", ipsum: 52, lorem: 42 },
-  { mes: "Mar", ipsum: 48, lorem: 38 },
-  { mes: "Abr", ipsum: 60, lorem: 50 },
-  { mes: "Mai", ipsum: 55, lorem: 45 },
-  { mes: "Jun", ipsum: 65, lorem: 55 },
-];
-
-const dadosBarra2 = [
-  { mes: "Jan", lorem: 30, ipsum: 40 },
-  { mes: "Fev", lorem: 35, ipsum: 45 },
-  { mes: "Mar", lorem: 25, ipsum: 35 },
-  { mes: "Abr", lorem: 45, ipsum: 55 },
-  { mes: "Mai", lorem: 40, ipsum: 50 },
-  { mes: "Jun", lorem: 50, ipsum: 60 },
-];
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-const COLORS2 = ["#8884d8", "#82ca9d", "#ffc658"];
+const COLORS_STATUS = ["#00C49F", "#FFBB28", "#FF8042"];
+const COLORS_TRANSPORTE = ["#0088FE", "#8884d8", "#82ca9d"];
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const {
+    statusData,
+    transporteData,
+    viagensMensaisData,
+    comprasMensaisData,
+    loading,
+    error,
+  } = useDashboardData();
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* --- Sidebar --- */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900">Logo</h1>
@@ -70,7 +40,6 @@ export default function Dashboard() {
             >
               Viagens Cadastradas
             </button>
-
             <button
               onClick={() => navigate(ROUTES.RELATORIO)}
               className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
@@ -85,151 +54,70 @@ export default function Dashboard() {
         </nav>
       </div>
 
+      {/* --- Conteúdo Principal --- */}
       <div className="flex-1 p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-lg shadow-md border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                Status das Viagens
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={dadosPizza1}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`
-                      }
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {dadosPizza1.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-gray-500 text-lg animate-pulse">
+              Carregando indicadores...
+            </p>
           </div>
+        )}
 
-          <div className="bg-white rounded-lg shadow-md border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                Distribuição por Classe
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={dadosPizza2}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name} ${(percent ? percent * 100 : 0).toFixed(0)}%`
-                      }
-                      outerRadius={100}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {dadosPizza2.map((_, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS2[index % COLORS2.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-6">
+            <span className="block sm:inline">{error}</span>
           </div>
-        </div>
+        )}
 
-        <div className="space-y-8">
-          <div className="bg-white rounded-lg shadow-md border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                RELATORIO Ipsum x Lorem
-              </h2>
+        {!loading && !error && (
+          <>
+            {/* Linha 1: Gráficos de Pizza */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              <PieChartComponent
+                title="Status das Viagens"
+                data={statusData}
+                colors={COLORS_STATUS}
+              />
+              <PieChartComponent
+                title="Meios de Transporte"
+                data={transporteData}
+                colors={COLORS_TRANSPORTE}
+              />
             </div>
-            <div className="p-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dadosBarra1}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mes" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="ipsum"
-                      fill="#0088FE"
-                      name="Ipsum"
-                      radius={[4, 4, 0, 0]}
-                    />
-                    <Bar
-                      dataKey="lorem"
-                      fill="#00C49F"
-                      name="Lorem"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-lg shadow-md border border-gray-200">
-            <div className="p-6 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">
-                RELATORIO Lorem x Ipsum
-              </h2>
-            </div>
-            <div className="p-6">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dadosBarra2}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mes" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="lorem"
-                      fill="#0088FE"
-                      name="Lorem"
-                      radius={[4, 4, 0, 0]}
-                    />
-                    <Bar
-                      dataKey="ipsum"
-                      fill="#00C49F"
-                      name="Ipsum"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        </div>
+            {/* Linha 2: Gráficos de Barra (Novos) */}
+            <div className="space-y-8">
+              {/* Viagens Concluídas por Mês */}
+              <BarChartComponent
+                title="Viagens Concluídas por Mês"
+                data={viagensMensaisData}
+                xAxisKey="name" // O DTO retorna 'name' (ex: Jan) e 'value'
+                bars={[
+                  {
+                    key: "value",
+                    label: "Viagens Concluídas",
+                    color: "#82ca9d",
+                  },
+                ]}
+              />
 
+              {/* Compras Realizadas por Mês */}
+              <BarChartComponent
+                title="Volume de Compras por Mês"
+                data={comprasMensaisData}
+                xAxisKey="name"
+                bars={[
+                  {
+                    key: "value",
+                    label: "Vendas Realizadas",
+                    color: "#8884d8",
+                  },
+                ]}
+              />
+            </div>
+          </>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-3">
