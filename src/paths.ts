@@ -4,6 +4,10 @@ export const ROUTES = {
   VIAGEM: "/viagem",
   RELATORIO: "/relatorio/dashboard",
   VIAGENS_CADASTRADAS: "/relatorio/viagens-cadastradas",
+
+  // Rota dinâmica para edição
+  EDITAR_VIAGEM: "/relatorio/viagens-cadastradas/editar/:id",
+
   LOGIN: "/login",
   SIGNUP: "/cadastro",
   VALIDAR: "/validar",

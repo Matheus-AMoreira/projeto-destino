@@ -50,8 +50,12 @@ const router = createBrowserRouter([
         path: ROUTES.PRODUCT,
         element: <ProductPage />,
       },
-     {
+      {
         path: ROUTES.CADASTRAR_VIAGEM,
+        element: <CadastrarViagem />,
+      },
+      {
+        path: ROUTES.EDITAR_VIAGEM,
         element: <CadastrarViagem />,
       },
       {

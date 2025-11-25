@@ -4,7 +4,7 @@ type InputChangeEvent = React.ChangeEvent<HTMLInputElement>;
 
 interface CampoInputProps {
   label?: string;
-  type: "email" | "password" | "text" | "number";
+  type: "username" | "email" | "password" | "text" | "number";
   value?: string;
   onChange: (e: InputChangeEvent) => void;
   required?: boolean;

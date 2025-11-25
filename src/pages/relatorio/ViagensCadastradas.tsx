@@ -15,19 +15,19 @@ export default function ViagensCadastradas() {
   };
 
   const handleEditar = (viagemId: number) => {
-  
-  navigate(ROUTES.CADASTRAR_VIAGEM, { 
-    state: { editar: true } 
-  });
-};
+    // CORREÇÃO: Navega para a URL com ID (ex: /relatorio/viagens-cadastradas/editar/10)
+    // O replace troca o placeholder ':id' pelo número real
+    const urlEdicao = ROUTES.EDITAR_VIAGEM.replace(":id", String(viagemId));
+    navigate(urlEdicao);
+  };
 
   const handleVisualizar = (viagemId: number) => {
-    // Quando formos implementar a integração com ID, o navigate vai ficar // navigate(`${ROUTES.PRODUCT}/${viagemId}`);
     navigate(ROUTES.PRODUCT);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar - Mantida igual */}
       <div className="w-64 bg-white shadow-lg">
         <div className="p-6 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900">Logo</h1>
@@ -65,41 +65,38 @@ export default function ViagensCadastradas() {
           <h1 className="text-2xl font-bold text-gray-900">
             Viagens Cadastradas
           </h1>
-          <button onClick={() => navigate(ROUTES.CADASTRAR_VIAGEM)}className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <button
+            onClick={() => navigate(ROUTES.CADASTRAR_VIAGEM)}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
             Cadastrar Viagem
           </button>
         </div>
 
+        {/* Grid de Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {viagens.map((viagem) => (
             <div
               key={viagem.id}
-              className="bg-white rounded-lg shadow-md border border-gray-200"
+              className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col"
             >
-              <div className="p-6 border-b border-gray-200">
+              <div className="p-6 border-b border-gray-200 flex-grow">
                 <h3 className="text-xl font-bold text-gray-900">
                   {viagem.nome}
                 </h3>
-                <p className="text-gray-600 text-sm mt-1">{viagem.descricao}</p>
+                <p className="text-gray-600 text-sm mt-1 line-clamp-3">
+                  {viagem.descricao}
+                </p>
               </div>
 
-              <div className="p-6">
+              <div className="p-6 mt-auto">
                 <ul className="space-y-2 mb-4">
-                  {viagem.itens.map((item, index) => (
-                    <li key={index} className="flex items-center text-gray-700">
-                      <svg
-                        className="w-4 h-4 text-green-500 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
+                  {viagem.itens?.slice(0, 3).map((item, index) => (
+                    <li
+                      key={index}
+                      className="flex items-center text-gray-700 text-sm"
+                    >
+                      <span className="mr-2 text-green-500">✓</span>
                       {item}
                     </li>
                   ))}
@@ -119,14 +116,14 @@ export default function ViagensCadastradas() {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => handleEditar(viagem.id)}
-                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     Editar
                   </button>
 
                   <button
                     onClick={() => handleVisualizar(viagem.id)}
-                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                   >
                     Visualizar
                   </button>
@@ -134,31 +131,6 @@ export default function ViagensCadastradas() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Gerenciamento de Viagens
-            </h3>
-            <p className="text-gray-600">
-              Aqui você pode visualizar, editar e gerenciar todos os pacotes de
-              viagem cadastrados no sistema. Utilize o botão "Cadastrar Viagem"
-              para adicionar novos pacotes.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Informações Importantes
-            </h3>
-            <p className="text-gray-600">
-              Todos os pacotes são exibidos com detalhes completos incluindo
-              serviços, valores e opções de personalização. Clique em "Editar"
-              para modificar qualquer pacote existente ou "Visualizar" para ver
-              detalhes.
-            </p>
-          </div>
         </div>
       </div>
     </div>

@@ -53,7 +53,7 @@ export default function Login() {
           <form>
             <CampoInput
               label="E-mail"
-              type="email"
+              type="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
