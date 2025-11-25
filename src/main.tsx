@@ -11,15 +11,23 @@ import App from "./App";
 import Cadastro from "./pages/auth/Cadastro";
 import Login from "./pages/auth/Login";
 import Viagem from "./pages/viagen/Viagem";
-import ViagensCadastradas from "./pages/relatorio/ViagensCadastradas";
-import Relatorio from "./pages/relatorio/Dashboard";
+import ViagensCadastradas from "./pages/administracao/pacote/registro/ViagensCadastradas";
+import Relatorio from "./pages/administracao/dashboard/Dashboard";
 import Validar from "./pages/validar/Validar";
 import ProductPage from "./pages/produto/ProductPage";
-import CadastrarViagem from "./pages/relatorio/CadastrarViagem";
+import CadastrarViagem from "./components/administracao/CadastrarViagem";
 import VisualizarViagem from "./pages/viagen/VisualizarViagem";
 import BuscarViagens from "./pages/Busca/BuscarViagem";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import ConfirmacaoPage from "./pages/Checkout/Confirmacao";
+import RegistrarPacoteFoto from "./pages/administracao/pacote/registro/RegistrarPacoteFoto";
+import PacotesFotoLista from "./pages/administracao/pacote/listas/PacotesFotoLista";
+import Dashboard from "./pages/administracao/dashboard/Dashboard";
+import AdminLayout from "./pages/administracao/AdminLayout";
+import HotelLista from "./pages/administracao/pacote/listas/HotelLista";
+import TransporteLista from "./pages/administracao/pacote/listas/TransporteLista";
+import RegistrarHotel from "./pages/administracao/pacote/registro/RegistrarHotel";
+import RegistrarTransporte from "./pages/administracao/pacote/registro/RegistrarTransporte";
 
 const router = createBrowserRouter([
   {
@@ -39,24 +47,8 @@ const router = createBrowserRouter([
         element: <Viagem />,
       },
       {
-        path: ROUTES.VIAGENS_CADASTRADAS,
-        element: <ViagensCadastradas />,
-      },
-      {
-        path: ROUTES.RELATORIO,
-        element: <Relatorio />,
-      },
-      {
         path: ROUTES.PRODUCT,
         element: <ProductPage />,
-      },
-      {
-        path: ROUTES.CADASTRAR_VIAGEM,
-        element: <CadastrarViagem />,
-      },
-      {
-        path: ROUTES.EDITAR_VIAGEM,
-        element: <CadastrarViagem />,
       },
       {
         path: `${ROUTES.VIAGEM}/visualizar`,
@@ -73,6 +65,28 @@ const router = createBrowserRouter([
       {
         path: ROUTES.CONFIRMACAO,
         element: <ConfirmacaoPage />,
+      },
+      {
+        path: "/administracao",
+        element: <AdminLayout />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "viagens-cadastradas", element: <ViagensCadastradas /> },
+          { path: "viagens-cadastradas/novo", element: <CadastrarViagem /> },
+          {
+            path: "viagens-cadastradas/editar/:id",
+            element: <CadastrarViagem />,
+          },
+          { path: "hoteis", element: <HotelLista /> },
+          { path: "hoteis/novo", element: <RegistrarHotel /> },
+          { path: "hoteis/editar/:id", element: <RegistrarHotel /> },
+          { path: "transportes", element: <TransporteLista /> },
+          { path: "transportes/novo", element: <RegistrarTransporte /> },
+          { path: "transportes/editar/:id", element: <RegistrarTransporte /> },
+          { path: "pacotes-foto", element: <PacotesFotoLista /> },
+          { path: "pacotes-foto/novo", element: <RegistrarPacoteFoto /> },
+          { path: "pacotes-foto/editar/:id", element: <RegistrarPacoteFoto /> },
+        ],
       },
     ],
   },

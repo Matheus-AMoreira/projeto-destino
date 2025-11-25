@@ -1,11 +1,10 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useViagens } from "@/utils/buscarFunctions";
 
 export default function ViagensCadastradas() {
   const { viagens } = useViagens();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const formatarValor = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -15,8 +14,6 @@ export default function ViagensCadastradas() {
   };
 
   const handleEditar = (viagemId: number) => {
-    // CORREÇÃO: Navega para a URL com ID (ex: /relatorio/viagens-cadastradas/editar/10)
-    // O replace troca o placeholder ':id' pelo número real
     const urlEdicao = ROUTES.EDITAR_VIAGEM.replace(":id", String(viagemId));
     navigate(urlEdicao);
   };
@@ -27,39 +24,6 @@ export default function ViagensCadastradas() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar - Mantida igual */}
-      <div className="w-64 bg-white shadow-lg">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900">Logo</h1>
-        </div>
-
-        <nav className="p-4">
-          <div className="space-y-2">
-            <button
-              onClick={() => navigate(ROUTES.VIAGENS_CADASTRADAS)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
-                location.pathname === ROUTES.VIAGENS_CADASTRADAS
-                  ? "bg-blue-50 text-blue-600 border border-blue-200"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              Viagens Cadastradas
-            </button>
-
-            <button
-              onClick={() => navigate(ROUTES.RELATORIO)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
-                location.pathname === ROUTES.RELATORIO
-                  ? "bg-blue-50 text-blue-600 border border-blue-200"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              Relatórios
-            </button>
-          </div>
-        </nav>
-      </div>
-
       <div className="flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">
@@ -73,7 +37,7 @@ export default function ViagensCadastradas() {
           </button>
         </div>
 
-        {/* Grid de Cards */}
+        {/* Grid de Cards (Código mantido igual) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {viagens.map((viagem) => (
             <div

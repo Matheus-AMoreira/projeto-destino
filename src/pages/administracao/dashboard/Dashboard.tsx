@@ -1,5 +1,5 @@
-import { BarChartComponent } from "@/components/relatorio/BarChartComponent";
-import { PieChartComponent } from "@/components/relatorio/PieChartComponent";
+import { BarChartComponent } from "@/components/administracao/BarChartComponent";
+import { PieChartComponent } from "@/components/administracao/PieChartComponent";
 import { ROUTES } from "@/paths";
 import { useDashboardData } from "@/utils/useDashboardData";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,38 +22,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* --- Sidebar --- */}
-      <div className="w-64 bg-white shadow-lg">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900">Logo</h1>
-        </div>
-
-        <nav className="p-4">
-          <div className="space-y-2">
-            <button
-              onClick={() => navigate(ROUTES.VIAGENS_CADASTRADAS)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
-                location.pathname === ROUTES.VIAGENS_CADASTRADAS
-                  ? "bg-blue-50 text-blue-600 border border-blue-200"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              Viagens Cadastradas
-            </button>
-            <button
-              onClick={() => navigate(ROUTES.RELATORIO)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
-                location.pathname === ROUTES.RELATORIO
-                  ? "bg-blue-50 text-blue-600 border border-blue-200"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              Relatórios
-            </button>
-          </div>
-        </nav>
-      </div>
-
       {/* --- Conteúdo Principal --- */}
       <div className="flex-1 p-8">
         {loading && (

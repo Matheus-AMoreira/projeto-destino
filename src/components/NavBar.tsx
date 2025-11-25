@@ -14,14 +14,14 @@ export default function Navbar() {
 
   const handleBuscar = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (termoBusca.trim()) {
       navigate(`${ROUTES.BUSCAR_VIAGEM}?q=${encodeURIComponent(termoBusca)}`);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       handleBuscar(e);
     }
   };
@@ -43,7 +43,7 @@ export default function Navbar() {
           to={ROUTES.RELATORIO}
           className="text-white font-medium hover:underline"
         >
-          Relatórios
+          Administração
         </Link>
         <Link
           to={ROUTES.CONTATO}
@@ -73,19 +73,6 @@ export default function Navbar() {
           </Link>
         )}
       </nav>
-
-      <form onSubmit={handleBuscar}>
-        <input
-          className="text-lg bg-white text-black text-center 
-          placeholder-black
-          border-solid rounded-xl outline-2 border-b-neutral-100"
-          type="search"
-          placeholder="Buscar no site..."
-          value={termoBusca}
-          onChange={(e) => setTermoBusca(e.target.value)}
-          onKeyPress={handleKeyPress}
-        />
-      </form>
     </header>
   );
 }

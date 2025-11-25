@@ -1,18 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+// --- INTERFACES ---
 interface Hotel {
   id: number;
   nome: string;
   diaria: number;
 }
-
 interface Transporte {
   id: number;
   empresa: string;
-  meio: "AEREO" | "TERRESTRE" | "MARITIMO";
+  meio: string;
   preco: number;
 }
+interface PacoteFoto {
+  id: number;
+  nome: string;
+  fotoDoPacote: string;
+} // Interface nova
 
 interface PacoteFormData {
   id?: number;
@@ -25,6 +30,7 @@ interface PacoteFormData {
   tags: string;
   hotelId: number | "";
   transporteId: number | "";
+  pacoteFotoId: number | ""; // Novo campo
 }
 
 const ID_FUNCIONARIO_TEMPORARIO = "fdc6bbde-bcae-4f19-afe6-91e0f0f999e1";
@@ -35,6 +41,7 @@ export default function CadastrarViagem() {
 
   const [hoteis, setHoteis] = useState<Hotel[]>([]);
   const [transportes, setTransportes] = useState<Transporte[]>([]);
+  const [pacotesFoto, setPacotesFoto] = useState<PacoteFoto[]>([]); // Estado novo
   const [loadingDados, setLoadingDados] = useState(true);
 
   const [isEditando, setIsEditando] = useState(false);
@@ -50,21 +57,22 @@ export default function CadastrarViagem() {
     tags: "",
     hotelId: "",
     transporteId: "",
+    pacoteFotoId: "", // Inicializa vazio
   });
-
-  // REMOVIDO: converterDataParaInput não é mais necessário pois Back e Front falam yyyy-MM-dd
 
   useEffect(() => {
     const init = async () => {
       try {
-        const [resHoteis, resTransportes] = await Promise.all([
+        const [resHoteis, resTransportes, resFotos] = await Promise.all([
           fetch("/api/hotel/"),
           fetch("/api/transporte/transporte"),
+          fetch("/api/pacote-foto"), // Busca as fotos
         ]);
 
-        if (resHoteis.ok && resTransportes.ok) {
+        if (resHoteis.ok && resTransportes.ok && resFotos.ok) {
           setHoteis(await resHoteis.json());
           setTransportes(await resTransportes.json());
+          setPacotesFoto(await resFotos.json());
         }
 
         if (id) {
@@ -80,13 +88,13 @@ export default function CadastrarViagem() {
               nome: pacote.nome,
               valor: pacote.preco,
               descricao: pacote.descricao,
-              // Backend agora retorna yyyy-MM-dd, que é nativo do input type="date"
               dataIda: pacote.inicio,
               dataVolta: pacote.fim,
               disponibilidade: pacote.disponibilidade,
               tags: Array.isArray(pacote.tags) ? pacote.tags.join(", ") : "",
               hotelId: pacote.hotel?.id || "",
               transporteId: pacote.transporte?.id || "",
+              pacoteFotoId: pacote.fotosDoPacote?.id || "", // Preenche na edição
             });
           } else {
             alert("Erro ao carregar dados para edição.");
@@ -108,8 +116,13 @@ export default function CadastrarViagem() {
   };
 
   const handleSalvar = async () => {
-    if (!formData.nome.trim() || !formData.hotelId || !formData.transporteId) {
-      alert("Preencha Nome, Hotel e Transporte.");
+    if (
+      !formData.nome.trim() ||
+      !formData.hotelId ||
+      !formData.transporteId ||
+      !formData.pacoteFotoId
+    ) {
+      alert("Preencha Nome, Hotel, Transporte e Pacote de Fotos.");
       return;
     }
     if (formData.valor <= 0) {
@@ -121,8 +134,8 @@ export default function CadastrarViagem() {
       nome: formData.nome,
       descricao: formData.descricao,
       preco: formData.valor,
-      inicio: formData.dataIda, // Envia yyyy-MM-dd
-      fim: formData.dataVolta, // Envia yyyy-MM-dd
+      inicio: formData.dataIda,
+      fim: formData.dataVolta,
       disponibilidade: formData.disponibilidade,
       tags: formData.tags
         .split(",")
@@ -130,6 +143,7 @@ export default function CadastrarViagem() {
         .filter((t) => t !== ""),
       hotel: Number(formData.hotelId),
       transporte: Number(formData.transporteId),
+      pacoteFoto: Number(formData.pacoteFotoId), // Envia o ID da foto
       funcionario: ID_FUNCIONARIO_TEMPORARIO,
     };
 
@@ -167,7 +181,6 @@ export default function CadastrarViagem() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Cabeçalho */}
       <div className="max-w-4xl mx-auto px-4 mb-8 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Logo</h1>
         <span
@@ -189,7 +202,6 @@ export default function CadastrarViagem() {
             </h2>
           </div>
 
-          {/* Nome */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Nome do Pacote
@@ -203,7 +215,6 @@ export default function CadastrarViagem() {
             />
           </div>
 
-          {/* Preço e Vagas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -237,8 +248,7 @@ export default function CadastrarViagem() {
             </div>
           </div>
 
-          {/* Hotel e Transporte */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Hotel
@@ -250,7 +260,7 @@ export default function CadastrarViagem() {
                 }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg"
               >
-                <option value="">Selecione um Hotel...</option>
+                <option value="">Selecione...</option>
                 {hoteis.map((h) => (
                   <option key={h.id} value={h.id}>
                     {h.nome} (Diária: R$ {h.diaria})
@@ -269,7 +279,7 @@ export default function CadastrarViagem() {
                 }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg"
               >
-                <option value="">Selecione um Transporte...</option>
+                <option value="">Selecione...</option>
                 {transportes.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.empresa} - {t.meio} (R$ {t.preco})
@@ -277,9 +287,28 @@ export default function CadastrarViagem() {
                 ))}
               </select>
             </div>
+            {/* Novo Select de Fotos */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Pacote de Fotos
+              </label>
+              <select
+                value={formData.pacoteFotoId}
+                onChange={(e) =>
+                  handleInputChange("pacoteFotoId", Number(e.target.value))
+                }
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg"
+              >
+                <option value="">Selecione...</option>
+                {pacotesFoto.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {f.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          {/* Descrição */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Descrição
@@ -292,10 +321,9 @@ export default function CadastrarViagem() {
             />
           </div>
 
-          {/* Tags */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tags (vírgula)
+              Tags
             </label>
             <input
               type="text"
@@ -305,7 +333,6 @@ export default function CadastrarViagem() {
             />
           </div>
 
-          {/* Datas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -340,7 +367,7 @@ export default function CadastrarViagem() {
             </button>
             <button
               onClick={handleSalvar}
-              className={`px-6 py-3 text-white rounded-lg font-medium hover:opacity-90 ${
+              className={`px-6 py-3 text-white rounded-lg font-medium ${
                 isEditando ? "bg-orange-600" : "bg-blue-600"
               }`}
             >

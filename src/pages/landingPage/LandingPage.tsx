@@ -1,18 +1,43 @@
 import Card from "@/components/landingPage/Card";
 import destaqueImage from "/assets/destaque.jpg";
-import { usePacotes } from "@/utils/buscarFunctions";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useState, useEffect } from "react";
+
+interface PacoteDisplay {
+  id: number;
+  nome: string;
+  descricao: string;
+  fotosDoPacote: {
+    fotoDoPacote: string; // URL da imagem principal
+  };
+}
 
 export default function LandingPage() {
-  const { pacotes } = usePacotes();
   const navigate = useNavigate();
+  const [pacotes, setPacotes] = useState<PacoteDisplay[]>([]);
+
+  useEffect(() => {
+    const fetchPacotes = async () => {
+      try {
+        const response = await fetch("/api/pacote"); // Endpoint público
+        if (response.ok) {
+          const data = await response.json();
+          setPacotes(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar pacotes da API", error);
+      }
+    };
+    fetchPacotes();
+  }, []);
 
   const handleComecePlanejar = () => {
     navigate(ROUTES.BUSCAR_VIAGEM);
   };
 
-  const handleSaibaMais = () => {
+  const handleSaibaMais = (id: number) => {
+    // Redireciona para o produto específico (ajuste conforme sua rota real)
     navigate(ROUTES.PRODUCT);
   };
 
@@ -24,19 +49,15 @@ export default function LandingPage() {
             <h1 className="text-center md:text-left text-4xl lg:text-5xl font-extrabold mb-4 px-4">
               O Mundo Todo em Suas Mãos
             </h1>
-
             <div className="text-lg p-4 md:px-8">
               <p>
                 Planeje a jornada dos seus sonhos sem complicações. Descubra
                 roteiros exclusivos, personalize cada detalhe e acesse pacotes
-                de viagem inesquecíveis. Nossa plataforma conecta você aos
-                destinos mais fantásticos do Brasil e do mundo com apenas alguns
-                cliques. Sua próxima grande aventura começa aqui!
+                de viagem inesquecíveis.
               </p>
             </div>
-
             <div className="px-4 md:px-8 flex justify-center md:justify-start mt-6">
-              <button 
+              <button
                 onClick={handleComecePlanejar}
                 className="bg-[#2071b3] text-white py-3 px-8 rounded-lg shadow-lg transition duration-300 hover:bg-blue-800"
               >
@@ -44,12 +65,11 @@ export default function LandingPage() {
               </button>
             </div>
           </div>
-
           <div className="flex justify-center w-full xl:w-[48%] mt-8 xl:mt-0">
             <img
               className="rounded-2xl w-full max-w-lg shadow-xl"
               src={destaqueImage}
-              alt="Imagem de destaque"
+              alt="Destaque"
             />
           </div>
         </section>
@@ -62,11 +82,19 @@ export default function LandingPage() {
           </h2>
           <div className="flex justify-center gap-6 flex-wrap px-4">
             {pacotes.map((data) => (
-              <div key={data.id} onClick={handleSaibaMais} className="cursor-pointer">
+              <div
+                key={data.id}
+                onClick={() => handleSaibaMais(data.id)}
+                className="cursor-pointer"
+              >
                 <Card
-                  title={data.title}
-                  description={data.description}
-                  imageUrl={data.imageUrl}
+                  title={data.nome}
+                  description={data.descricao}
+                  // Pega a URL da foto principal do relacionamento
+                  imageUrl={
+                    data.fotosDoPacote?.fotoDoPacote ||
+                    "https://via.placeholder.com/300"
+                  }
                 />
               </div>
             ))}
