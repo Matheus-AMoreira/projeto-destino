@@ -1,3 +1,5 @@
+const ROTA_PACOTES_BASE = "/pacotes";
+
 export const ROUTES = {
   // Administração
   LANDINGPAGE: "/",
@@ -29,8 +31,12 @@ export const ROUTES = {
   LOGIN: "/login",
   SIGNUP: "/cadastro",
   VALIDAR: "/validar",
-  PRODUCT: "/produto",
-  BUSCAR_VIAGEM: "/buscar-viagem",
+
+  // Pacotes
+  BUSCAR_PACOTES: ROTA_PACOTES_BASE,
+  PACOTE_DETALHES: `${ROTA_PACOTES_BASE}/detalhar/:id`,
+
+  //Compra
   CHECKOUT: "/checkout",
   CONFIRMACAO: "/confirmacao",
-} as const;
+};

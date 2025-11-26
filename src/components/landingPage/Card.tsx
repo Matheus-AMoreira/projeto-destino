@@ -1,10 +1,16 @@
 interface CardProps {
   title: string;
   description: string;
-  imageUrl: any;
+  imageUrl: string;
+  detalhar: () => void;
 }
 
-const Card = ({ title, description, imageUrl }: CardProps) => {
+export default function Card({
+  title,
+  description,
+  imageUrl,
+  detalhar,
+}: CardProps) {
   return (
     <div
       className="border-2 border-gray-300 bg-white max-w-sm m-1 
@@ -26,14 +32,13 @@ const Card = ({ title, description, imageUrl }: CardProps) => {
         </div>
 
         <button
-          className="mt-4 w-full bg-[#2071b3] text-white py-2.5 px-6 
+          className="mt-4 w-full bg-[#2071b3] text-white py-2.5 px-6 cursor-pointer
         rounded-lg transition duration-300 hover:bg-blue-800 shadow-md"
+          onClick={detalhar}
         >
           Saiba Mais...
         </button>
       </div>
     </div>
   );
-};
-
-export default Card;
+}

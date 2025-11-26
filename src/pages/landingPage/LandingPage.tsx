@@ -1,5 +1,6 @@
 import Card from "@/components/landingPage/Card";
-import destaqueImage from "/assets/destaque.jpg";
+import destaqueImage from "/destaque.jpg";
+import placeholder from "/placeholder.jpg";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useState, useEffect } from "react";
@@ -32,15 +33,6 @@ export default function LandingPage() {
     fetchPacotes();
   }, []);
 
-  const handleComecePlanejar = () => {
-    navigate(ROUTES.BUSCAR_VIAGEM);
-  };
-
-  const handleSaibaMais = (id: number) => {
-    // Redireciona para o produto específico (ajuste conforme sua rota real)
-    navigate(ROUTES.PRODUCT);
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-linear-to-br from-white to-sky-200">
       <main className="grow p-4 md:p-8">
@@ -58,7 +50,7 @@ export default function LandingPage() {
             </div>
             <div className="px-4 md:px-8 flex justify-center md:justify-start mt-6">
               <button
-                onClick={handleComecePlanejar}
+                onClick={() => navigate(ROUTES.BUSCAR_PACOTES)}
                 className="bg-[#2071b3] text-white py-3 px-8 rounded-lg shadow-lg transition duration-300 hover:bg-blue-800"
               >
                 Comece a Planejar
@@ -82,21 +74,17 @@ export default function LandingPage() {
           </h2>
           <div className="flex justify-center gap-6 flex-wrap px-4">
             {pacotes.map((data) => (
-              <div
+              <Card
                 key={data.id}
-                onClick={() => handleSaibaMais(data.id)}
-                className="cursor-pointer"
-              >
-                <Card
-                  title={data.nome}
-                  description={data.descricao}
-                  // Pega a URL da foto principal do relacionamento
-                  imageUrl={
-                    data.fotosDoPacote?.fotoDoPacote ||
-                    "https://via.placeholder.com/300"
-                  }
-                />
-              </div>
+                title={data.nome}
+                description={data.descricao}
+                imageUrl={data.fotosDoPacote?.fotoDoPacote || placeholder}
+                detalhar={() =>
+                  navigate(
+                    ROUTES.PACOTE_DETALHES.replace(":id", String(data.id))
+                  )
+                }
+              />
             ))}
           </div>
         </section>

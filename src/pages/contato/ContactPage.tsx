@@ -1,4 +1,4 @@
-import logo from "/assets/icon.png";
+import logo from "/icon.png";
 
 export default function ContactPage() {
   return (

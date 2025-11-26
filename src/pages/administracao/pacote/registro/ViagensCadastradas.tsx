@@ -13,15 +13,6 @@ export default function ViagensCadastradas() {
     }).format(valor);
   };
 
-  const handleEditar = (viagemId: number) => {
-    const urlEdicao = ROUTES.EDITAR_VIAGEM.replace(":id", String(viagemId));
-    navigate(urlEdicao);
-  };
-
-  const handleVisualizar = (viagemId: number) => {
-    navigate(ROUTES.PRODUCT);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <div className="flex-1 p-8">
@@ -79,14 +70,22 @@ export default function ViagensCadastradas() {
 
                 <div className="flex space-x-3">
                   <button
-                    onClick={() => handleEditar(viagem.id)}
+                    onClick={() =>
+                      navigate(
+                        ROUTES.EDITAR_VIAGEM.replace(":id", String(viagem.id))
+                      )
+                    }
                     className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                   >
                     Editar
                   </button>
 
                   <button
-                    onClick={() => handleVisualizar(viagem.id)}
+                    onClick={() =>
+                      navigate(
+                        ROUTES.PACOTE_DETALHES.replace(":id", String(viagem.id))
+                      )
+                    }
                     className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
                   >
                     Visualizar
