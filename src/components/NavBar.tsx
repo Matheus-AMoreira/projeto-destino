@@ -16,7 +16,7 @@ export default function Navbar() {
     e.preventDefault();
 
     if (termoBusca.trim()) {
-      navigate(`${ROUTES.BUSCAR_VIAGEM}?q=${encodeURIComponent(termoBusca)}`);
+      navigate(`${ROUTES.BUSCAR_PACOTES}?q=${encodeURIComponent(termoBusca)}`);
     }
   };
 
@@ -33,12 +33,12 @@ export default function Navbar() {
       </Link>
 
       <nav className="flex flex-wrap gap-7">
-        <Link
+        {/*<Link
           to={ROUTES.VIAGEM}
           className="text-white font-medium hover:underline"
         >
           Viagens
-        </Link>
+        </Link>*/}
         <Link
           to={ROUTES.RELATORIO}
           className="text-white font-medium hover:underline"

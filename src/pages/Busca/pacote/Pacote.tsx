@@ -90,7 +90,7 @@ export default function Pacote() {
   };
 
   const handleComprar = () => {
-    navigate(ROUTES.CHECKOUT);
+    navigate(ROUTES.CHECKOUT, { state: { pacote } });
   };
 
   if (loading) {
