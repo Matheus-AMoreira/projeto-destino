@@ -272,7 +272,7 @@ export default function Pacote() {
                     onClick={() =>
                       setNumeroPessoas((prev) => Math.max(1, prev - 1))
                     }
-                    disabled={numeroPessoas <= 1}
+                    disabled={numeroPessoas >= 1}
                     className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
                     -
@@ -286,7 +286,7 @@ export default function Pacote() {
                         Math.min(pacote.disponibilidade, prev + 1)
                       )
                     }
-                    disabled={numeroPessoas >= pacote.disponibilidade}
+                    disabled={numeroPessoas <= pacote.disponibilidade}
                     className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
                   >
                     +

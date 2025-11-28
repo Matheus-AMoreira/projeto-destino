@@ -1,16 +1,11 @@
-import { BarChartComponent } from "@/components/administracao/BarChartComponent";
-import { PieChartComponent } from "@/components/administracao/PieChartComponent";
-import { ROUTES } from "@/paths";
+import { BarChartComponent } from "@/components/administracao/dashboard/BarChartComponent";
+import { PieChartComponent } from "@/components/administracao/dashboard/PieChartComponent";
 import { useDashboardData } from "@/utils/useDashboardData";
-import { useNavigate, useLocation } from "react-router-dom";
 
 const COLORS_STATUS = ["#00C49F", "#FFBB28", "#FF8042"];
 const COLORS_TRANSPORTE = ["#0088FE", "#8884d8", "#82ca9d"];
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const {
     statusData,
     transporteData,

@@ -7,11 +7,11 @@ export interface Modal {
 }
 
 interface AuthModalProps {
-  setModal: React.Dispatch<React.SetStateAction<Modal>>;
   modalData: Modal;
+  setModal: React.Dispatch<React.SetStateAction<Modal>>;
 }
 
-export default function AuthModal({ setModal, modalData }: AuthModalProps) {
+export default function CustomModal({ modalData, setModal }: AuthModalProps) {
   const navigate = useNavigate();
 
   return (

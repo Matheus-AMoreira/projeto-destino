@@ -1,4 +1,4 @@
-import { logout } from "@/utils/authFunctions";
+import { logout } from "@/utils/auth/authFunctions";
 import { create } from "zustand";
 
 type UserState = {

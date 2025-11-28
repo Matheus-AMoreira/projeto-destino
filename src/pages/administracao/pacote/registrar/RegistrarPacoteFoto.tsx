@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Route, useNavigate, useParams } from "react-router-dom";
-import Sidebar from "@/components/administracao/SideBar";
+import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/paths";
 
 interface FotoAdicional {

@@ -1,8 +1,9 @@
 import UsersList from "@/components/validar/usersList";
 import {
   listInvalidUsers,
+  ValidarUsuario,
   type InvalidUsersResponse,
-} from "@/utils/authFunctions";
+} from "@/utils/auth/authFunctions";
 import { useEffect, useState } from "react";
 
 export default function Validar() {
@@ -31,7 +32,23 @@ export default function Validar() {
     <>
       {users.users ? (
         users.users.length > 0 &&
-        users.users?.map((user) => <UsersList key={user.id} user={user} />)
+        users.users?.map((user) => (
+          <div>
+            <p>{user.nome}</p>
+            <p>{user.cpf}</p>
+            <p>{user.email}</p>
+            <p>{user.telefone}</p>
+            <p>{user.cadastro}</p>
+            <button
+              className="cursor-pointer"
+              onClick={() => {
+                ValidarUsuario(user.id);
+              }}
+            >
+              Validar
+            </button>
+          </div>
+        ))
       ) : (
         <p>{users.mensagem}</p>
       )}

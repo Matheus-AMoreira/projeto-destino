@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
 
 export default function Confirmacao() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [tempoRestante, setTempoRestante] = useState(5);
 
   const dadosCompra = location.state || {
     numeroPedido: "PED" + Math.random().toString(36).substr(2, 9).toUpperCase(),

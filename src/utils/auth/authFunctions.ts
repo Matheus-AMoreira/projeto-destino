@@ -1,14 +1,14 @@
 import { useSession } from "@/store/usuarioStore";
 
 export interface Usuario {
-  id: string;
+  id?: string;
   nome: string;
   sobreNome: string;
   cpf: string;
   email: string;
   telefone: string;
-  perfil: string;
-  valido: boolean;
+  perfil?: string;
+  valido?: boolean;
   atualização: string;
   cadastro: string;
   senha: string;
@@ -32,19 +32,15 @@ export const cadastrarUsuario = async (
   usuario: RegistroUser | null
 ): Promise<RegistrationResponse> => {
   if (usuario) {
-    try {
-      const response = await fetch("api/auth/singup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(usuario),
-      });
+    const response = await fetch("api/auth/singup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(usuario),
+    });
 
-      return await response.json();
-    } catch (error: unknown) {
-      return { error: true, mensagem: "Erro inesperado!" };
-    }
+    return await response.json();
   }
   return { error: true, mensagem: "Usuário inválido" };
 };
@@ -112,31 +108,28 @@ export interface InvalidUsersResponse {
 }
 
 export const listInvalidUsers = async (): Promise<InvalidUsersResponse> => {
-  try {
-    const response = await fetch("api/auth/usuarios/invalidos", {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      return {
-        error: true,
-        mensagem: "Não foi possivel chamar a API",
-        users: null,
-      };
-    }
-
-    const result: Usuario[] = await response.json();
-    if (result.length > 0) {
-      return {
-        error: false,
-        mensagem: "Nenhum usuários encontrado para validação!",
-        users: result,
-      };
-    }
-    return { error: false, mensagem: "Usuários encontrados!", users: result };
-  } catch (error: unknown) {
-    return { error: true, mensagem: "Erro inesperado!", users: null };
+  const response = await fetch("api/auth/usuarios/invalidos", {
+    credentials: "include",
+  });
+  console.log(response);
+  if (!response.ok) {
+    return {
+      error: true,
+      mensagem: "Não foi possivel chamar a API",
+      users: null,
+    };
   }
+
+  const result: Usuario[] = await response.json();
+  console.log(result);
+  if (result.length > 0) {
+    return {
+      error: false,
+      mensagem: "Nenhum usuários encontrado para validação!",
+      users: result,
+    };
+  }
+  return { error: false, mensagem: "Usuários encontrados!", users: result };
 };
 
 export interface ValidarUsuarioResponse {
