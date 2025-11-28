@@ -1,42 +1,47 @@
-const ROTA_PACOTES_BASE = "/pacotes";
+export const ROTAS_BASE = {
+  PACOTES: `/pacotes`,
+  ADMINISTRACAO: `/administracao`,
+};
 
 export const ROUTES = {
   // Administração
-  LANDINGPAGE: "/",
-  CONTATO: "/contato",
-  VIAGEM: "/viagem",
-  RELATORIO: "/administracao/dashboard",
+  LANDINGPAGE: `/`,
+  CONTATO: `/contato`,
+  VIAGEM: `/viagem`,
+  RELATORIO: `${ROTAS_BASE.ADMINISTRACAO}/dashboard`,
 
   // Viagens
-  VIAGENS_CADASTRADAS: "/administracao/viagens-cadastradas",
-  CADASTRAR_VIAGEM: "/administracao/viagens-cadastradas/novo",
-  EDITAR_VIAGEM: "/administracao/viagens-cadastradas/editar/:id",
+  VIAGENS_CADASTRADAS: `${ROTAS_BASE.ADMINISTRACAO}/viagens-cadastradas`,
+  CADASTRAR_VIAGEM: `${ROTAS_BASE.ADMINISTRACAO}/viagens-cadastradas/novo`,
+  EDITAR_VIAGEM: `${ROTAS_BASE.ADMINISTRACAO}/viagens-cadastradas/editar/:id`,
 
   // Fotos
-  PACOTES_FOTO_LISTA: "/administracao/pacotes-foto",
-  REGISTRAR_FOTOS: "/administracao/pacotes-foto/novo",
-  EDITAR_FOTOS: "/administracao/pacotes-foto/editar/:id",
+  PACOTES_FOTO_LISTA: `${ROTAS_BASE.ADMINISTRACAO}/pacotes-foto`,
+  REGISTRAR_FOTOS: `${ROTAS_BASE.ADMINISTRACAO}/pacotes-foto/novo`,
+  EDITAR_FOTOS: `${ROTAS_BASE.ADMINISTRACAO}/pacotes-foto/editar/:id`,
 
   // Hotéis
-  HOTEIS_LISTA: "/administracao/hoteis",
-  REGISTRAR_HOTEL: "/administracao/hoteis/novo",
-  EDITAR_HOTEL: "/administracao/hoteis/editar/:id",
+  HOTEIS_LISTA: `${ROTAS_BASE.ADMINISTRACAO}/hoteis`,
+  REGISTRAR_HOTEL: `${ROTAS_BASE.ADMINISTRACAO}/hoteis/novo`,
+  EDITAR_HOTEL: `${ROTAS_BASE.ADMINISTRACAO}/hoteis/editar/:id`,
 
   // Transportes
-  TRANSPORTES_LISTA: "/administracao/transportes",
-  REGISTRAR_TRANSPORTE: "/administracao/transportes/novo",
-  EDITAR_TRANSPORTE: "/administracao/transportes/editar/:id",
+  TRANSPORTES_LISTA: `${ROTAS_BASE.ADMINISTRACAO}/transportes`,
+  REGISTRAR_TRANSPORTE: `${ROTAS_BASE.ADMINISTRACAO}/transportes/novo`,
+  EDITAR_TRANSPORTE: `${ROTAS_BASE.ADMINISTRACAO}/transportes/editar/:id`,
 
   // Públicas
-  LOGIN: "/login",
-  SIGNUP: "/cadastro",
-  VALIDAR: "/validar",
+  LOGIN: `/login`,
+  SIGNUP: `/cadastro`,
 
   // Pacotes
-  BUSCAR_PACOTES: ROTA_PACOTES_BASE,
-  PACOTE_DETALHES: `${ROTA_PACOTES_BASE}/detalhar/:id`,
+  BUSCAR_PACOTES: ROTAS_BASE.PACOTES,
+  PACOTE_DETALHES: `${ROTAS_BASE}/detalhar/:id`,
 
   //Compra
-  CHECKOUT: "/checkout",
-  CONFIRMACAO: "/confirmacao",
+  CHECKOUT: `/checkout`,
+  CONFIRMACAO: `/confirmacao`,
+
+  //Usuario
+  LISTAR_USUARIOS: `${ROTAS_BASE.ADMINISTRACAO}/usuarios`,
 };

@@ -44,7 +44,6 @@ export default function Sidebar() {
 
       <nav className="p-4 flex-1 overflow-y-auto">
         <div className="space-y-1">
-          {/* Dashboard Geral */}
           <button
             onClick={() => navigate(ROUTES.RELATORIO)}
             className={linkClass(ROUTES.RELATORIO)}
@@ -113,6 +112,12 @@ export default function Sidebar() {
                     <FaTruckPlane className="text-lg mr-2 pb-0.5" />
                     Transporte
                   </div>
+                </button>
+                <button
+                  onClick={() => navigate(ROUTES.LISTAR_USUARIOS)}
+                  className={linkClass(ROUTES.LISTAR_USUARIOS, true)}
+                >
+                  Usuarios
                 </button>
               </div>
             )}

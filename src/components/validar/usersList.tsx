@@ -1,4 +1,4 @@
-import { ValidarUsuario, type Usuario } from "@/utils/authFunctions";
+import { ValidarUsuario, type Usuario } from "@/utils/auth/authFunctions";
 
 interface UsersListProps {
   user: Usuario;

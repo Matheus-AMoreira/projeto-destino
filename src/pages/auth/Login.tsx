@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import CampoInput from "@/components/auth/CampoInput";
-import AuthModal, { type Modal } from "@/components/auth/AuthModal";
 import AuthLogo from "@/components/auth/AuthLogo";
 import { ROUTES } from "@/paths";
-import { loginUsuario } from "@/utils/authFunctions";
+import CustomModal, { type Modal } from "@/components/CustomModal";
+import { loginUsuario } from "@/utils/auth/authFunctions";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -94,7 +94,7 @@ export default function Login() {
         <AuthLogo />
       </div>
 
-      {modal.show && <AuthModal setModal={setModal} modalData={modal} />}
+      {modal.show && <CustomModal modalData={modal} setModal={setModal} />}
     </div>
   );
 }

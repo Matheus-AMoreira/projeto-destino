@@ -2,30 +2,14 @@ import { ROUTES } from "@/paths";
 import { useSession } from "@/store/usuarioStore";
 import logo from "/LogoPaulaViagensVetor_2.png";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
-  const [user, setUser] = useState<string | null>();
-  const [termoBusca, setTermoBusca] = useState("");
-  const navigate = useNavigate();
+  const [user, setUser] = useState<string | null>();
 
   useEffect(() => {
     setUser(useSession.getState().email);
   }, []);
-
-  const handleBuscar = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (termoBusca.trim()) {
-      navigate(`${ROUTES.BUSCAR_PACOTES}?q=${encodeURIComponent(termoBusca)}`);
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleBuscar(e);
-    }
-  };
 
   return (
     <header className="flex flex-wrap items-center place-content-between py-1 px-[30px] bg-[#ff944d] pt-3 pb-1">
@@ -76,7 +60,6 @@ export default function Navbar() {
           </Link>
         )}
       </nav>
-      {/* 3. Removido o <div className="flex items-center"> vazio que estava no final. */}
     </header>
   );
 }

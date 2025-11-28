@@ -4,32 +4,28 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 
 import "@/index.css";
-import { ROUTES } from "./paths";
+import { ROTAS_BASE, ROUTES } from "./paths";
 import ContactPage from "./pages/contato/ContactPage";
 import LandingPage from "./pages/landingPage/LandingPage";
 import App from "./App";
 import Cadastro from "./pages/auth/Cadastro";
 import Login from "./pages/auth/Login";
-import Viagem from "./pages/usuario/Viagem";
-import ViagensCadastradas from "./pages/administracao/pacote/registro/ViagensCadastradas";
-import Relatorio from "./pages/administracao/dashboard/Dashboard";
-import Validar from "./pages/administracao/usuario/Validar";
-import ProductPage from "./pages/Busca/pacote/Pacote";
-import CadastrarViagem from "./components/administracao/CadastrarViagem";
+import ViagensCadastradas from "./pages/administracao/dropdown/pacote/registrar/ViagensCadastradas";
+import Validar from "./pages/administracao/dropdown/usuario/listar/UsuarioLista";
 import VisualizarViagem from "./pages/usuario/VisualizarViagem";
-import BuscarViagens from "./pages/Busca/BuscarPacotes";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
 import ConfirmacaoPage from "./pages/checkout/confirmacao/Confirmacao";
-import RegistrarPacoteFoto from "./pages/administracao/pacote/registro/RegistrarPacoteFoto";
-import PacotesFotoLista from "./pages/administracao/pacote/listas/PacotesFotoLista";
+import RegistrarPacoteFoto from "./pages/administracao/dropdown/pacote/registrar/RegistrarPacoteFoto";
+import PacotesFotoLista from "./pages/administracao/dropdown/pacote/listar/PacotesFotoLista";
 import Dashboard from "./pages/administracao/dashboard/Dashboard";
 import AdminLayout from "./pages/administracao/AdminLayout";
-import HotelLista from "./pages/administracao/pacote/listas/HotelLista";
-import TransporteLista from "./pages/administracao/pacote/listas/TransporteLista";
-import RegistrarHotel from "./pages/administracao/pacote/registro/RegistrarHotel";
-import RegistrarTransporte from "./pages/administracao/pacote/registro/RegistrarTransporte";
+import HotelLista from "./pages/administracao/dropdown/pacote/listar/HotelLista";
+import TransporteLista from "./pages/administracao/dropdown/pacote/listar/TransporteLista";
+import RegistrarHotel from "./pages/administracao/dropdown/pacote/registrar/RegistrarHotel";
+import RegistrarTransporte from "./pages/administracao/dropdown/pacote/registrar/RegistrarTransporte";
 import Pacote from "./pages/Busca/pacote/Pacote";
 import BuscarPacotes from "./pages/Busca/BuscarPacotes";
+import CadastrarViagem from "./components/administracao/pacote/CadastrarViagem";
 
 const router = createBrowserRouter([
   {
@@ -65,7 +61,7 @@ const router = createBrowserRouter([
         element: <ConfirmacaoPage />,
       },
       {
-        path: "/administracao",
+        path: `${ROTAS_BASE.ADMINISTRACAO}`,
         element: <AdminLayout />,
         children: [
           { path: "dashboard", element: <Dashboard /> },
@@ -84,6 +80,7 @@ const router = createBrowserRouter([
           { path: "pacotes-foto", element: <PacotesFotoLista /> },
           { path: "pacotes-foto/novo", element: <RegistrarPacoteFoto /> },
           { path: "pacotes-foto/editar/:id", element: <RegistrarPacoteFoto /> },
+          { path: ROUTES.LISTAR_USUARIOS, element: <Validar /> },
         ],
       },
     ],
@@ -95,10 +92,6 @@ const router = createBrowserRouter([
   {
     path: ROUTES.SIGNUP,
     element: <Cadastro />,
-  },
-  {
-    path: ROUTES.VALIDAR,
-    element: <Validar />,
   },
   {
     path: "*",
