@@ -1,6 +1,6 @@
 import AuthLogo from "@/components/auth/AuthLogo";
 import CampoInput from "@/components/auth/CampoInput";
-import CustomModal from "@/components/CustomModal";
+import CustomModal, { type Modal } from "@/components/CustomModal";
 import { ROUTES } from "@/paths";
 import {
   validarApenasLetras,
@@ -10,17 +10,13 @@ import {
   validarEmail,
   validarSenhaForte,
 } from "@/utils/auth/FormValidation";
-import {
-  cadastrarUsuario,
-  type RegistroUser,
-} from "@/utils/auth/authFunctions";
+import { type RegistroUser } from "@/utils/auth/authFunctions";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-export interface Modal {
-  show: boolean;
-  msg: string;
-  url: string | null;
+interface RegistrationResponse {
+  erro: boolean;
+  mensagem: string;
 }
 
 export default function Cadastro() {
@@ -50,7 +46,7 @@ export default function Cadastro() {
 
   const [modal, setModal] = useState<Modal>({
     show: false,
-    msg: "",
+    mensagem: "",
     url: null,
   });
 
@@ -157,20 +153,44 @@ export default function Cadastro() {
       telefone: usuario.telefone.replace(/\D/g, ""),
     };
 
-    const response = await cadastrarUsuario(usuarioParaEnvio);
-    setLoading(false);
+    try {
+      setLoading(true);
 
-    if (response.error) {
-      setModal({ show: true, msg: response.mensagem, url: null });
-      setCadastroSucesso(false);
-    } else {
-      setCadastroSucesso(true);
+      if (usuario) {
+        const response = await fetch("api/auth/cadastrar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(usuarioParaEnvio),
+        });
+        const result: RegistrationResponse = await response.json();
+
+        if (!response.ok) {
+          setModal({
+            show: true,
+            mensagem: result.mensagem || "Ocorreu um erro inesperado.",
+            url: null,
+          });
+          setCadastroSucesso(false);
+          return result;
+        }
+        setCadastroSucesso(true);
+        setModal({
+          show: true,
+          mensagem:
+            "Cadastro efetuado com sucesso!\n Aguarde o email de confirmação.",
+          url: ROUTES.LANDINGPAGE,
+        });
+        reset();
+      }
+    } catch (erro) {
+      console.log(erro);
       setModal({
         show: true,
-        msg: "Cadastro efetuado com sucesso!\n Agora espere o email da administração com a confirmação",
-        url: ROUTES.LANDINGPAGE,
+        mensagem: "Erro de conexão. Verifique sua internet.",
+        url: null,
       });
-      reset();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -353,7 +373,7 @@ export default function Cadastro() {
         <AuthLogo />
       </div>
 
-      {modal.show && <CustomModal setModal={setModal} modalData={modal} />}
+      {modal.show && <CustomModal modalData={modal} setModal={setModal} />}
     </div>
   );
 }
