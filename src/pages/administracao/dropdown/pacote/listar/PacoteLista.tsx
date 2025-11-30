@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
 
 interface Pacote {
   id: number;
   nome: string;
   descricao: string;
   valor: number;
-  preco: number; // Pode vir como preco ou valor dependendo do DTO, ajustando
+  preco: number;
   status: "CONCLUIDO" | "EMANDAMENTO" | "CANCELADO";
   hotel?: { nome: string };
   transporte?: { empresa: string; meio: string };
@@ -17,12 +18,11 @@ interface PacotesAgrupados {
   [local: string]: Pacote[];
 }
 
-export default function ViagensCadastradas() {
+export default function PacoteLista() {
+  const { usuario, isLoading } = useSession();
   const navigate = useNavigate();
   const [grupos, setGrupos] = useState<PacotesAgrupados>({});
   const [loading, setLoading] = useState(true);
-
-  // Estado para controlar quais grupos estão abertos (Expanded)
   const [abertos, setAbertos] = useState<Record<string, boolean>>({});
 
   const formatarValor = (valor: number) => {
@@ -33,22 +33,40 @@ export default function ViagensCadastradas() {
   };
 
   useEffect(() => {
-    // Busca dados agrupados do endpoint novo
-    fetch("/api/pacote/agrupado-admin")
-      .then((res) => res.json())
-      .then((data) => {
-        setGrupos(data);
-        // Abre todos os grupos por padrão (opcional)
+    setLoading(true);
+    const fetchHoteis = async () => {
+      if (!usuario || !usuario.accessToken) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch("/api/pacote/agrupado-admin", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`,
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Erro ao buscar hotéis");
+
+        const result = await response.json();
+        setGrupos(result);
         const initialOpenState: Record<string, boolean> = {};
-        Object.keys(data).forEach((key) => (initialOpenState[key] = true));
+        Object.keys(result).forEach((key) => (initialOpenState[key] = true));
         setAbertos(initialOpenState);
+      } catch (error) {
+        console.error(error);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    if (!isLoading && usuario) {
+      fetchHoteis();
+    }
+    setLoading(false);
+  }, [usuario, isLoading]);
 
   const toggleGrupo = (local: string) => {
     setAbertos((prev) => ({ ...prev, [local]: !prev[local] }));

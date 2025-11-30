@@ -10,7 +10,7 @@ interface PacoteDisplay {
   nome: string;
   descricao: string;
   fotosDoPacote: {
-  fotoDoPacote: string; // URL da imagem principal
+    fotoDoPacote: string;
   };
 }
 
@@ -21,10 +21,10 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchPacotes = async () => {
       try {
-        const response = await fetch("/api/pacote"); // Endpoint público
+        const response = await fetch("/api/publico/pacote");
         if (response.ok) {
           const data = await response.json();
-          setPacotes(data.content);
+          setPacotes(data);
         }
       } catch (error) {
         console.error("Erro ao buscar pacotes da API", error);

@@ -36,7 +36,7 @@ export const ROUTES = {
 
   // Pacotes
   BUSCAR_PACOTES: ROTAS_BASE.PACOTES,
-  PACOTE_DETALHES: `${ROTAS_BASE}/detalhar/:id`,
+  PACOTE_DETALHES: `${ROTAS_BASE.PACOTES}/detalhar/:id`,
 
   //Compra
   CHECKOUT: `/checkout`,

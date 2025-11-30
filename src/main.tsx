@@ -10,10 +10,9 @@ import LandingPage from "./pages/landingPage/LandingPage";
 import App from "./App";
 import Cadastro from "./pages/auth/Cadastro";
 import Login from "./pages/auth/Login";
-import ViagensCadastradas from "./pages/administracao/dropdown/pacote/registrar/ViagensCadastradas";
+import ViagensCadastradas from "./pages/administracao/dropdown/pacote/listar/PacoteLista";
 import Validar from "./pages/administracao/dropdown/usuario/listar/UsuarioLista";
 import VisualizarViagem from "./pages/usuario/VisualizarViagem";
-import CheckoutPage from "./pages/checkout/CheckoutPage";
 import ConfirmacaoPage from "./pages/checkout/confirmacao/Confirmacao";
 import RegistrarPacoteFoto from "./pages/administracao/dropdown/pacote/registrar/RegistrarPacoteFoto";
 import PacotesFotoLista from "./pages/administracao/dropdown/pacote/listar/PacotesFotoLista";
@@ -23,9 +22,10 @@ import HotelLista from "./pages/administracao/dropdown/pacote/listar/HotelLista"
 import TransporteLista from "./pages/administracao/dropdown/pacote/listar/TransporteLista";
 import RegistrarHotel from "./pages/administracao/dropdown/pacote/registrar/RegistrarHotel";
 import RegistrarTransporte from "./pages/administracao/dropdown/pacote/registrar/RegistrarTransporte";
-import Pacote from "./pages/Busca/pacote/Pacote";
-import BuscarPacotes from "./pages/Busca/BuscarPacotes";
-import CadastrarViagem from "./components/administracao/pacote/CadastrarViagem";
+import CadastrarViagem from "./pages/administracao/dropdown/pacote/registrar/RegistrarPacote";
+import CheckoutPage from "./pages/checkout/CheckoutPage";
+import BuscarPacotes from "./pages/busca/BuscarPacotes";
+import Pacote from "./pages/busca/pacote/Pacote";
 
 const router = createBrowserRouter([
   {

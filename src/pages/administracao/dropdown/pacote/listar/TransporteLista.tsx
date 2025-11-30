@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import DataList from "@/components/administracao/lista/dataList";
+import { useSession } from "@/store/sessionStore";
 
 interface Transporte {
   id: number;
@@ -24,25 +25,42 @@ const transporteKeys = ["id", "empresa", "meio", "preco"];
 
 export default function TransporteLista() {
   const navigate = useNavigate();
+  const { usuario, isLoading } = useSession();
   const [transportes, setTransportes] = useState<Transporte[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTransportes = () => {
-    fetch("/api/transporte/transporte")
-      .then((res) => res.json())
-      .then((data) => {
-        setTransportes(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
-    fetchTransportes();
-  }, []);
+    setLoading(true);
+    const fetchHoteis = async () => {
+      if (!usuario || !usuario.accessToken) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch("/api/transporte", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`,
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Erro ao buscar hotéis");
+
+        const result = await response.json();
+        setTransportes(result);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isLoading && usuario) {
+      fetchHoteis();
+    }
+    setLoading(false);
+  }, [usuario, isLoading]);
 
   const handleEdit = (id: number) => {
     navigate(ROUTES.EDITAR_TRANSPORTE.replace(":id", String(id)));

@@ -1,4 +1,4 @@
-import { useSession } from "@/store/usuarioStore";
+import { useSession } from "@/store/sessionStore";
 
 export interface Usuario {
   id?: string;
@@ -43,49 +43,6 @@ export const cadastrarUsuario = async (
     return await response.json();
   }
   return { error: true, mensagem: "Usuário inválido" };
-};
-
-export interface LoginRequest {
-  email: string;
-  senha: string;
-}
-
-interface LoginResponse {
-  error: boolean;
-  mensagem: string;
-  userInfo?: UserInfo;
-}
-
-export interface UserInfo {
-  id: string;
-  nome: string;
-}
-
-export const loginUsuario = async (
-  credenciaisUsuario: LoginRequest
-): Promise<LoginResponse> => {
-  try {
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(credenciaisUsuario),
-    });
-    const result: LoginResponse = await response.json();
-    if (result.userInfo) {
-      useSession.getState().updateUser({
-        id: result.userInfo.id,
-        email: result.userInfo.nome,
-        isLoged: true,
-      });
-      return { error: result.error, mensagem: result.mensagem };
-    }
-    return { error: result.error, mensagem: result.mensagem };
-  } catch (error: unknown) {
-    return { error: true, mensagem: "Erro inesperado!" };
-  }
 };
 
 export const logout = async (): Promise<string> => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
 
 interface PacoteFoto {
   id: number;
@@ -11,21 +12,42 @@ interface PacoteFoto {
 
 export default function PacotesFotoLista() {
   const navigate = useNavigate();
+  const { usuario, isLoading } = useSession();
   const [pacotes, setPacotes] = useState<PacoteFoto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/pacote-foto")
-      .then((res) => res.json())
-      .then((data) => {
-        setPacotes(data);
+    setLoading(true);
+    const fetchHoteis = async () => {
+      if (!usuario || !usuario.accessToken) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch("/api/pacote-foto", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`,
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Erro ao buscar hotéis");
+
+        const result = await response.json();
+        setPacotes(result);
+      } catch (error) {
+        console.error(error);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  }, []);
+      }
+    };
+
+    if (!isLoading && usuario) {
+      fetchHoteis();
+    }
+    setLoading(false);
+  }, [usuario, isLoading]);
 
   const handleEditar = (id: number) => {
     navigate(ROUTES.EDITAR_FOTOS.replace(":id", String(id)));

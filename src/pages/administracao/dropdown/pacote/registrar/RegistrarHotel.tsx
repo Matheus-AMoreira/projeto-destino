@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
 
 // Interfaces corrigidas baseadas no modelo Java
 interface Regiao {
@@ -24,6 +25,7 @@ interface Cidade {
 
 export default function RegistrarHotel() {
   const navigate = useNavigate();
+  const { usuario } = useSession();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
 
@@ -46,7 +48,12 @@ export default function RegistrarHotel() {
 
   // 1. Carregar Regiões ao iniciar
   useEffect(() => {
-    fetch("/api/hotel/regioes")
+    fetch("/api/hotel/regioes", {
+      credentials: "include",
+      headers: {
+        Authorization: `Bearer ${usuario?.accessToken}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         setRegioes(data);
@@ -58,7 +65,12 @@ export default function RegistrarHotel() {
   // 2. Carregar Estados quando Região mudar
   useEffect(() => {
     if (selectedRegiao) {
-      fetch(`/api/hotel/estados/${selectedRegiao}`)
+      fetch(`/api/hotel/estados/${selectedRegiao}`, {
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
+      })
         .then((res) => res.json())
         .then(setEstados)
         .catch(console.error);
@@ -71,7 +83,12 @@ export default function RegistrarHotel() {
   // 3. Carregar Cidades quando Estado mudar
   useEffect(() => {
     if (selectedEstado) {
-      fetch(`/api/hotel/cidades/${selectedEstado}`)
+      fetch(`/api/hotel/cidades/${selectedEstado}`, {
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
+      })
         .then((res) => res.json())
         .then(setCidades)
         .catch(console.error);
@@ -85,7 +102,12 @@ export default function RegistrarHotel() {
     if (isEditing) {
       const loadData = async () => {
         try {
-          const res = await fetch(`/api/hotel/${id}`);
+          const res = await fetch(`/api/hotel/${id}`, {
+            credentials: "include",
+            headers: {
+              Authorization: `Bearer ${usuario?.accessToken}`,
+            },
+          });
           if (res.ok) {
             const hotel = await res.json();
             setNome(hotel.nome);
@@ -101,17 +123,22 @@ export default function RegistrarHotel() {
               // Seta os IDs para disparar os useEffects de cascata
               setSelectedRegiao(regiaoId);
 
-              // Precisamos esperar os estados carregarem para setar o estado?
-              // O React vai disparar o useEffect de selectedRegiao, buscar os estados...
-              // Mas para garantir que o valor apareça selecionado, podemos pré-carregar manualmente aqui ou confiar no fluxo.
-              // Para edição segura, vamos buscar as listas manuais aqui para garantir a ordem.
-
-              const resEstados = await fetch(`/api/hotel/estados/${regiaoId}`);
+              const resEstados = await fetch(`/api/hotel/estados/${regiaoId}`, {
+                credentials: "include",
+                headers: {
+                  Authorization: `Bearer ${usuario?.accessToken}`,
+                },
+              });
               const listaEstados = await resEstados.json();
               setEstados(listaEstados);
               setSelectedEstado(estadoId);
 
-              const resCidades = await fetch(`/api/hotel/cidades/${estadoId}`);
+              const resCidades = await fetch(`/api/hotel/cidades/${estadoId}`, {
+                credentials: "include",
+                headers: {
+                  Authorization: `Bearer ${usuario?.accessToken}`,
+                },
+              });
               const listaCidades = await resCidades.json();
               setCidades(listaCidades);
               setSelectedCidade(cidadeId);
@@ -146,7 +173,10 @@ export default function RegistrarHotel() {
 
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
         body: JSON.stringify(payload),
       });
 
@@ -216,7 +246,7 @@ export default function RegistrarHotel() {
                 value={selectedRegiao}
                 onChange={(e) => {
                   setSelectedRegiao(Number(e.target.value));
-                  setSelectedEstado(""); // Reseta filhos
+                  setSelectedEstado("");
                   setSelectedCidade("");
                 }}
                 className="w-full border p-2 rounded"
@@ -230,14 +260,14 @@ export default function RegistrarHotel() {
               </select>
             </div>
 
-            {/* Select Estado (Desabilitado se não tiver Região) */}
+            {/* Select Estado  */}
             <div>
               <label className="block text-sm font-medium mb-1">Estado</label>
               <select
                 value={selectedEstado}
                 onChange={(e) => {
                   setSelectedEstado(Number(e.target.value));
-                  setSelectedCidade(""); // Reseta filho
+                  setSelectedCidade("");
                 }}
                 className="w-full border p-2 rounded disabled:bg-gray-100"
                 disabled={!selectedRegiao}
