@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useSession } from "@/store/sessionStore";
+import { HiMiniCamera } from "react-icons/hi2";
+import { TbCameraCancel } from "react-icons/tb";
+import { TbPencilPin } from "react-icons/tb";
+import { FaLink } from "react-icons/fa";
+import { IoMdPhotos } from "react-icons/io";
+import { BiSolidPencil } from "react-icons/bi";
+import { MdCancel } from "react-icons/md";
+import { MdOutlineAddPhotoAlternate } from "react-icons/md";
+import { TbPhotoShare } from "react-icons/tb";
 
 interface FotoAdicional {
   nome: string;
@@ -17,7 +26,6 @@ export default function RegistrarPacoteFoto() {
   const [nomePacote, setNomePacote] = useState("");
   const [urlPrincipal, setUrlPrincipal] = useState("");
 
-  // Inicializa com 4 campos vazios
   const [fotosAdicionais, setFotosAdicionais] = useState<FotoAdicional[]>(
     Array(4).fill({ nome: "", url: "" })
   );
@@ -39,7 +47,6 @@ export default function RegistrarPacoteFoto() {
           setNomePacote(data.nome);
           setUrlPrincipal(data.fotoDoPacote);
 
-          // Se tiver fotos do banco, preenche. Se tiver menos de 4, completa com vazios.
           let loadedFotos = [];
           if (data.fotos && data.fotos.length > 0) {
             loadedFotos = data.fotos.map((f: any) => ({
@@ -48,7 +55,6 @@ export default function RegistrarPacoteFoto() {
             }));
           }
 
-          // Garante no mínimo 4 campos para edição também, se quiser manter a consistência UI
           while (loadedFotos.length < 4) {
             loadedFotos.push({ nome: "", url: "" });
           }
@@ -85,7 +91,6 @@ export default function RegistrarPacoteFoto() {
       return;
     }
 
-    // Filtra campos vazios antes de enviar
     const fotosParaEnviar = fotosAdicionais.filter(
       (f) => f.nome.trim() !== "" && f.url.trim() !== ""
     );
@@ -128,22 +133,26 @@ export default function RegistrarPacoteFoto() {
       <div className="flex-1 p-8">
         <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">
-              {isEditing ? "Editar Pacote de Fotos" : "Novo Pacote de Fotos"}
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <HiMiniCamera className="text-2xl" />
+              <span>
+                {isEditing ? "Editar Pacote de Fotos" : "Novo Pacote de Fotos"}
+              </span>
             </h1>
             <button
               onClick={() => navigate(-1)}
-              className="text-gray-500 hover:text-gray-700"
+              className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-md flex items-center space-x-2"
             >
-              Cancelar
+              <TbCameraCancel className="text-lg" />
+              <span>Cancelar</span>
             </button>
           </div>
 
-          {/* Dados Principais */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nome do Pacote
+              <label className="block text-sm font-medium text-gray-700 mb-2 items-center space-x-3">
+                <span>Nome do Pacote</span>
+                <TbPencilPin className="text-lg" />
               </label>
               <input
                 type="text"
@@ -154,8 +163,9 @@ export default function RegistrarPacoteFoto() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL Foto Principal (Capa)
+              <label className="block text-sm font-medium text-gray-700 mb-2 items-center space-x-3">
+                <span>URL da Foto em Destaque</span>
+                <FaLink className="text-lg" />
               </label>
               <input
                 type="text"
@@ -169,7 +179,9 @@ export default function RegistrarPacoteFoto() {
 
           {urlPrincipal && (
             <div className="mb-8">
-              <span className="text-xs text-gray-400">Prévia da Capa:</span>
+              <span className="text-xs text-gray-400">
+                Prévia da Imagem em Destaque:
+              </span>
               <img
                 src={urlPrincipal}
                 alt="Capa"
@@ -180,10 +192,10 @@ export default function RegistrarPacoteFoto() {
 
           <div className="border-t border-gray-200 my-6"></div>
 
-          {/* Fotos Adicionais */}
           <div className="mb-4 flex justify-between items-end">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Fotos Adicionais
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+              <IoMdPhotos className="text-lg" />
+              <span>Fotos Adicionais</span>
             </h2>
           </div>
 
@@ -194,8 +206,9 @@ export default function RegistrarPacoteFoto() {
                 className="flex gap-4 items-start bg-gray-50 p-4 rounded-lg border border-gray-200"
               >
                 <div className="flex-1">
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    Nome da Foto {index + 1}
+                  <label className="block text-xs font-medium text-gray-500 mb-1 items-center space-x-2">
+                    <span>Nome da Foto Adicional {index + 1}</span>
+                    <BiSolidPencil className="text-lg" />
                   </label>
                   <input
                     type="text"
@@ -206,12 +219,14 @@ export default function RegistrarPacoteFoto() {
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:border-blue-500 outline-none text-sm"
                   />
                 </div>
-                <div className="flex-[2]">
-                  <label className="block text-xs font-medium text-gray-500 mb-1">
-                    URL da Imagem
+                <div className="flex-2">
+                  <label className="block text-xs font-medium text-gray-500 mb-1 items-center space-x-2">
+                    <span>URL da Imagem Adicional {index + 1}</span>
+                    <FaLink className="text-lg" />
                   </label>
                   <input
                     type="text"
+                    placeholder="https://..."
                     value={foto.url}
                     onChange={(e) =>
                       handleFotoChange(index, "url", e.target.value)
@@ -219,13 +234,12 @@ export default function RegistrarPacoteFoto() {
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:border-blue-500 outline-none text-sm"
                   />
                 </div>
-                {/* Botão remover só aparece se tiver mais que 1 campo ou se for o usuário removendo extras */}
                 <button
                   onClick={() => removerCampo(index)}
-                  className="mt-6 text-red-500 hover:text-red-700 text-sm font-medium"
-                  title="Remover linha"
+                  className="mt-6 text-sm font-medium text-gray-600 hover:text-red-700 transition-colors"
+                  title="Remover foto"
                 >
-                  ✕
+                  <MdCancel className="text-xl" />
                 </button>
               </div>
             ))}
@@ -234,18 +248,22 @@ export default function RegistrarPacoteFoto() {
           <div className="mt-4 flex justify-end">
             <button
               onClick={adicionarCampo}
-              className="text-blue-600 font-medium hover:bg-blue-50 px-4 py-2 rounded transition-colors"
+              className="font-medium px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 bg-blue-600 text-white hover:bg-green-700 shadow-md"
             >
-              + Adicionar mais um campo
+              <MdOutlineAddPhotoAlternate className="text-lg" />
+              <span>Adicionar mais 1 foto</span>
             </button>
           </div>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
             <button
               onClick={handleSalvar}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-md flex items-center justify-center space-x-2"
             >
-              {isEditing ? "Salvar Alterações" : "Registrar Pacote de Fotos"}
+              <TbPhotoShare className="text-lg" />
+              <span>
+                {isEditing ? "Salvar Alterações" : "Registrar Pacote de Fotos"}
+              </span>
             </button>
           </div>
         </div>

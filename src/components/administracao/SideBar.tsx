@@ -3,7 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import logo from "/icon.png";
 import { BiSolidPieChartAlt2 } from "react-icons/bi";
-import { FaMapMarkedAlt, FaUser } from "react-icons/fa";
+import { IoIosArrowDropupCircle } from "react-icons/io";
+import { FaUserCog } from "react-icons/fa";
+import { FaMapMarkedAlt } from "react-icons/fa";
 import { HiMiniCamera } from "react-icons/hi2";
 import { FaHotel } from "react-icons/fa6";
 import { FaTruckPlane } from "react-icons/fa6";
@@ -29,7 +31,7 @@ export default function Sidebar() {
   `;
 
   return (
-    <div className="w-64 bg-white shadow-lg flex-shrink-0 flex flex-col h-screen sticky top-0">
+    <div className="w-64 bg-white shadow-lg shrink-0 flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-gray-200">
         <div className="flex justify-center md:w-2.1">
           <img
@@ -52,7 +54,6 @@ export default function Sidebar() {
             </div>
           </button>
 
-          {/* Menu Dropdown de Gerenciamento */}
           <div>
             <button
               onClick={() => setIsAdminOpen(!isAdminOpen)}
@@ -64,7 +65,7 @@ export default function Sidebar() {
                   isAdminOpen ? "rotate-180" : ""
                 }`}
               >
-                ▼
+                <IoIosArrowDropupCircle className="text-lgg mr-2 pb-0.5" />
               </span>
             </button>
 
@@ -79,7 +80,6 @@ export default function Sidebar() {
                     Pacotes de Viagem
                   </div>
                 </button>
-
                 <button
                   onClick={() => navigate(ROUTES.PACOTES_FOTO_LISTA)}
                   className={linkClass(ROUTES.PACOTES_FOTO_LISTA, true)}
@@ -89,6 +89,7 @@ export default function Sidebar() {
                     Pacotes de Fotos
                   </div>
                 </button>
+
                 <button
                   onClick={() => navigate(ROUTES.HOTEIS_LISTA)}
                   className={linkClass(ROUTES.HOTEIS_LISTA, true)}
@@ -113,7 +114,8 @@ export default function Sidebar() {
                   className={linkClass(ROUTES.LISTAR_USUARIOS, true)}
                 >
                   <div className="flex items-center">
-                    <FaUser className="text-lg mr-2 pb-0.5" /> Usuarios
+                    <FaUserCog className="text-lg mr-2 pb-0.5" />
+                    Usuários
                   </div>
                 </button>
               </div>

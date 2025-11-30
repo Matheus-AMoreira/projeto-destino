@@ -29,27 +29,29 @@ export default function Navbar() {
         {session.usuario?.perfil == "ADMINISTRADOR" && (
           <Link
             to={ROUTES.RELATORIO}
-            className="text-white hover:text-[#2071b3]"
+            className="text-white font-bold hover:text-[#2071b3]"
           >
             Administração
           </Link>
         )}
         {session.isLoged ? (
-          <div>
-            <span className="text-white">
-              Usuário: {session.usuario?.nomeCompleto} |{" "}
-            </span>
+          <span className="text-white font-bold flex">
+            Usuário: {session.usuario?.nomeCompleto}
+            <p className="ml-2">|</p>
             <button
-              className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer"
+              className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer ml-2"
               onClick={() => {
                 useSession.getState().logout();
               }}
             >
               Logout
             </button>
-          </div>
+          </span>
         ) : (
-          <Link to={ROUTES.LOGIN} className="text-white hover:text-[#2071b3]">
+          <Link
+            to={ROUTES.LOGIN}
+            className="text-white font-bold hover:text-[#2071b3]"
+          >
             Login
           </Link>
         )}

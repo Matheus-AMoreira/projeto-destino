@@ -5,7 +5,99 @@ import { useSession } from "@/store/sessionStore";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const seassion = useSession();
+  const location = useLocation();
+  console.log(location);
+
+  // Store de Usuário
+  const { usuario } = useSession();
+
+  // Dados do Pacote vindo da navegação anterior
+  const pacoteState = location.state?.pacote;
+
+  // Estados do Formulário
+  const [metodoPagamento, setMetodoPagamento] = useState("cartao-credito");
+  const [parcelas, setParcelas] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  // Se não tiver pacote selecionado, volta (proteção)
+  useEffect(() => {
+    if (!pacoteState) {
+      alert("Nenhum pacote selecionado.");
+      navigate(ROUTES.BUSCAR_PACOTES);
+    }
+  }, [pacoteState, navigate]);
+
+  if (!pacoteState) return null;
+
+  // Cálculos
+  const valorTotal = pacoteState.preco || 0;
+  const descontoPix = valorTotal * 0.05;
+  const valorComDescontoPix = valorTotal - descontoPix;
+
+  const formatarValor = (valor: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
+
+  const handleFinalizarCompra = async () => {
+    setLoading(true);
+
+    // Mapeamento para os Enums do Backend
+    let metodoEnvio = "VISTA";
+    let processadorEnvio = "VISA";
+
+    if (metodoPagamento === "pix") {
+      metodoEnvio = "VISTA";
+      processadorEnvio = "PIX";
+    } else if (metodoPagamento === "cartao-credito") {
+      metodoEnvio = parcelas > 1 ? "PARCELADO" : "VISTA";
+      processadorEnvio = "MASTERCARD";
+    } else if (metodoPagamento === "cartao-debito") {
+      metodoEnvio = "VISTA";
+      processadorEnvio = "VISA";
+    }
+
+    const payload = {
+      usuarioId: usuario?.id,
+      pacoteId: pacoteState.id,
+      metodo: metodoEnvio,
+      processador: processadorEnvio,
+      parcelas: parcelas,
+    };
+
+    try {
+      const response = await fetch("/api/compra", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const msg = await response.text();
+        // Sucesso! Redireciona para confirmação
+        navigate(ROUTES.CONFIRMACAO, {
+          state: {
+            numeroPedido: msg, // Mensagem do back (ex: "Compra ... Pedido #123")
+            pacote: pacoteState.nome,
+            valor: metodoPagamento === "pix" ? valorComDescontoPix : valorTotal,
+            metodoPagamento: metodoPagamento.toUpperCase().replace("-", " "),
+            data: new Date().toLocaleDateString("pt-BR"),
+          },
+        });
+      } else {
+        const erro = await response.text();
+        alert(`Erro na compra: ${erro}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro de conexão ao processar compra.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -28,11 +120,8 @@ export default function CheckoutPage() {
                 👤 Seus Dados
               </h2>
               <div className="space-y-2">
-                <p className="text-sm text-gray-500">
-                  ID: {seassion.usuario?.nomeCompleto}
-                </p>
                 <p>
-                  <strong>Email:</strong> {seassion.usuario?.email}
+                  <strong>Email:</strong> {usuario?.email}
                 </p>
               </div>
             </div>
