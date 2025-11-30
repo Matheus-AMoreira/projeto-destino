@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import DataList from "@/components/administracao/lista/dataList";
+import { useSession } from "@/store/sessionStore";
 
 interface cidade {
   id: number;
@@ -45,25 +46,40 @@ const hotelKeys = ["id", "nome", "local", "diaria"];
 
 export default function HotelLista() {
   const navigate = useNavigate();
+  const { usuario, isLoading } = useSession();
   const [hoteis, setHoteis] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchHoteis = () => {
-    fetch("/api/hotel/")
-      .then((res) => res.json())
-      .then((data) => {
-        setHoteis(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
-  };
-
   useEffect(() => {
-    fetchHoteis();
-  }, []);
+    const fetchHoteis = async () => {
+      if (!usuario || !usuario.accessToken) return;
+
+      setLoading(true);
+      try {
+        const response = await fetch("/api/hotel", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`,
+          },
+          credentials: "include",
+        });
+
+        if (!response.ok) throw new Error("Erro ao buscar hotéis");
+
+        const result = await response.json();
+        setHoteis(result);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isLoading && usuario) {
+      fetchHoteis();
+    }
+  }, [usuario, isLoading]);
 
   const handleEdit = (id: number) => {
     navigate(ROUTES.EDITAR_HOTEL.replace(":id", String(id)));

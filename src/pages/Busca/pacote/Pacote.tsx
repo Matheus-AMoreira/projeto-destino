@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import placeholder from "/placeholder.jpg";
 
-// Interfaces baseadas no retorno do seu Backend
 interface Foto {
   id: number;
   url: string;
@@ -32,8 +31,8 @@ interface PacoteDetalhes {
     meio: string;
   };
   fotosDoPacote: {
-    fotoDoPacote: string; // Foto Principal
-    fotos: Foto[]; // Fotos Adicionais
+    fotoDoPacote: string;
+    fotos: Foto[];
   };
 }
 
@@ -50,7 +49,7 @@ export default function Pacote() {
   // Busca os dados do pacote
   useEffect(() => {
     if (id) {
-      fetch(`/api/pacote/id/${id}`)
+      fetch(`/api/publico/pacote/${id}`)
         .then((res) => {
           if (!res.ok) throw new Error("Pacote não encontrado");
           return res.json();
@@ -192,7 +191,7 @@ export default function Pacote() {
                   <button
                     key={index}
                     onClick={() => setImagemSelecionada(foto.url)}
-                    className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                    className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       imagemSelecionada === foto.url
                         ? "border-blue-500 opacity-100"
                         : "border-transparent opacity-70 hover:opacity-100"
@@ -247,7 +246,7 @@ export default function Pacote() {
               </div>
 
               {/* Preço e Pessoas */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+              <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
                 <div className="flex items-baseline space-x-2">
                   <span className="text-4xl font-bold text-blue-900">
                     {formatarPreco(calcularPrecoTotal())}
@@ -370,7 +369,7 @@ export default function Pacote() {
             onClick={(e) => e.stopPropagation()} // Evita fechar ao clicar na imagem
           />
 
-          {/* Navegação no Modal (Opcional, mas útil) */}
+          {/* Navegação no Modal */}
           <div
             className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4 overflow-x-auto"
             onClick={(e) => e.stopPropagation()}

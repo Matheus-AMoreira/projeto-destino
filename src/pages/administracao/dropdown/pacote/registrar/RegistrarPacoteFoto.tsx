@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
 
 interface FotoAdicional {
   nome: string;
@@ -9,6 +10,7 @@ interface FotoAdicional {
 
 export default function RegistrarPacoteFoto() {
   const navigate = useNavigate();
+  const { usuario } = useSession();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
 
@@ -25,7 +27,13 @@ export default function RegistrarPacoteFoto() {
   useEffect(() => {
     if (isEditing) {
       setLoading(true);
-      fetch(`/api/pacote-foto/${id}`)
+      fetch(`/api/pacote-foto/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
+        credentials: "include",
+      })
         .then((res) => res.json())
         .then((data) => {
           setNomePacote(data.nome);
@@ -94,7 +102,10 @@ export default function RegistrarPacoteFoto() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
         body: JSON.stringify(payload),
       });
 

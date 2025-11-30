@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
 
 export default function RegistrarTransporte() {
   const navigate = useNavigate();
+  const { usuario } = useSession();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
 
@@ -13,16 +15,32 @@ export default function RegistrarTransporte() {
   const [loading, setLoading] = useState(isEditing);
 
   useEffect(() => {
+    const editar = async () => {
+      try {
+        const response = await fetch(`/api/transporte/${id}`, {
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${usuario?.accessToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Transporte não existe");
+        }
+
+        const result = await response.json();
+
+        setEmpresa(result.empresa);
+        setMeio(result.meio);
+        setPreco(result.preco);
+      } catch (erro) {
+        console.log(erro);
+      } finally {
+        setLoading(false);
+      }
+    };
     if (isEditing) {
-      fetch(`/api/transporte/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setEmpresa(data.empresa);
-          setMeio(data.meio);
-          setPreco(data.preco);
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
+      editar();
     }
   }, [id, isEditing]);
 
@@ -39,14 +57,16 @@ export default function RegistrarTransporte() {
     };
 
     try {
-      const url = isEditing
-        ? `/api/transporte/${id}`
-        : "/api/transporte/transporte";
+      const url = isEditing ? `/api/transporte/${id}` : "/api/transporte";
       const method = isEditing ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${usuario?.accessToken}`,
+        },
         body: JSON.stringify(payload),
       });
 

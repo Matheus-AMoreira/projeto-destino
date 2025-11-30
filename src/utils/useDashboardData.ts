@@ -1,3 +1,4 @@
+import { useSession } from "@/store/sessionStore";
 import { useState, useEffect } from "react";
 
 export interface ChartData {
@@ -15,6 +16,9 @@ interface DashboardDataState {
 }
 
 export const useDashboardData = () => {
+  // 1. Pegamos o token atual da sessão
+  const { usuario } = useSession();
+
   const [data, setData] = useState<DashboardDataState>({
     statusData: [],
     transporteData: [],
@@ -26,29 +30,45 @@ export const useDashboardData = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        // Promise.all garante que todas carreguem juntas
-        const [resStatus, resTransporte, resViagens, resCompras] =
-          await Promise.all([
-            fetch("/api/dashboard/status-viagem"),
-            fetch("/api/dashboard/transporte-stats"),
-            fetch("/api/dashboard/viagens/mensais"),
-            fetch("/api/dashboard/viagens/vendidos"),
-          ]);
+      // Se não tiver token (usuário não logado), nem tenta buscar
+      if (!usuario?.accessToken) return;
 
-        if (
-          !resStatus.ok ||
-          !resTransporte.ok ||
-          !resViagens.ok ||
-          !resCompras.ok
-        ) {
-          throw new Error("Falha ao buscar dados do dashboard");
+      try {
+        // 2. Criamos as opções padrão para todas as requisições
+        const requestOptions: RequestInit = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`, // Injeta o Token JWT
+          },
+          credentials: "include", // Importante para enviar/receber Cookies HttpOnly
+        };
+
+        // 3. Array de URLs para facilitar
+        const urls = [
+          "/api/dashboard/status-viagem",
+          "/api/dashboard/transporte-stats",
+          "/api/dashboard/viagens/mensais",
+          "/api/dashboard/viagens/vendidos",
+        ];
+
+        // 4. Executa o Promise.all mapeando as URLs e aplicando as opções
+        const responses = await Promise.all(
+          urls.map((url) => fetch(url, requestOptions))
+        );
+
+        // Verifica se alguma deu erro (status fora de 200-299)
+        for (const res of responses) {
+          if (!res.ok) throw new Error(`Falha na requisição: ${res.url}`);
         }
 
-        const statusData = await resStatus.json();
-        const transporteData = await resTransporte.json();
-        const viagensMensaisData = await resViagens.json();
-        const comprasMensaisData = await resCompras.json();
+        // 5. Extrai o JSON de todas as respostas
+        const [
+          statusData,
+          transporteData,
+          viagensMensaisData,
+          comprasMensaisData,
+        ] = await Promise.all(responses.map((res) => res.json()));
 
         setData({
           statusData,
@@ -58,18 +78,18 @@ export const useDashboardData = () => {
           loading: false,
           error: null,
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
         setData((prev) => ({
           ...prev,
           loading: false,
-          error: "Erro ao carregar dados. Tente atualizar a página.",
+          error: err.message || "Erro ao carregar dados.",
         }));
       }
     };
 
     fetchData();
-  }, []);
+  }, [usuario?.accessToken]); // 6. Reexecuta se o token mudar (ex: refresh ou login)
 
   return data;
 };

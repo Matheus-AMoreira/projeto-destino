@@ -3,12 +3,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import logo from "/icon.png";
 import { BiSolidPieChartAlt2 } from "react-icons/bi";
-import { FaMapMarkedAlt } from "react-icons/fa";
+import { FaMapMarkedAlt, FaUser } from "react-icons/fa";
 import { HiMiniCamera } from "react-icons/hi2";
 import { FaHotel } from "react-icons/fa6";
 import { FaTruckPlane } from "react-icons/fa6";
-
-
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -49,9 +47,9 @@ export default function Sidebar() {
             className={linkClass(ROUTES.RELATORIO)}
           >
             <div className="pl-4 flex items-center">
-                    <BiSolidPieChartAlt2 className="text-lgg mr-2 pb-0.5" />
-                    Dashboard
-                  </div>
+              <BiSolidPieChartAlt2 className="text-lgg mr-2 pb-0.5" />
+              Dashboard
+            </div>
           </button>
 
           {/* Menu Dropdown de Gerenciamento */}
@@ -81,8 +79,7 @@ export default function Sidebar() {
                     Pacotes de Viagem
                   </div>
                 </button>
-                  
-                {/* --- ALTERAÇÃO FEITA AQUI --- */}
+
                 <button
                   onClick={() => navigate(ROUTES.PACOTES_FOTO_LISTA)}
                   className={linkClass(ROUTES.PACOTES_FOTO_LISTA, true)}
@@ -92,8 +89,6 @@ export default function Sidebar() {
                     Pacotes de Fotos
                   </div>
                 </button>
-                {/* --------------------------- */}
-
                 <button
                   onClick={() => navigate(ROUTES.HOTEIS_LISTA)}
                   className={linkClass(ROUTES.HOTEIS_LISTA, true)}
@@ -117,7 +112,9 @@ export default function Sidebar() {
                   onClick={() => navigate(ROUTES.LISTAR_USUARIOS)}
                   className={linkClass(ROUTES.LISTAR_USUARIOS, true)}
                 >
-                  Usuarios
+                  <div className="flex items-center">
+                    <FaUser className="text-lg mr-2 pb-0.5" /> Usuarios
+                  </div>
                 </button>
               </div>
             )}
