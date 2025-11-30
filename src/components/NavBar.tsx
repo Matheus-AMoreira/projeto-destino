@@ -35,19 +35,18 @@ export default function Navbar() {
           </Link>
         )}
         {session.isLoged ? (
-          <div>
-            <span className="text-white font-bold">
-              Usuário: {session.usuario?.nomeCompleto}
-            </span>
+          <span className="text-white font-bold flex">
+            Usuário: {session.usuario?.nomeCompleto}
+            <p className="ml-2">|</p>
             <button
-              className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer"
+              className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer ml-2"
               onClick={() => {
                 useSession.getState().logout();
               }}
             >
               Logout
             </button>
-          </div>
+          </span>
         ) : (
           <Link
             to={ROUTES.LOGIN}

@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
-import { useSession } from "@/store/usuarioStore"; // Ajuste o caminho do store
-
-// ID Temporário para teste (Substitua por um UUID válido do seu banco)
-const ID_USUARIO_TESTE = "fdc6bbde-bcae-4f19-afe6-91e0f0f999e1";
+import { useSession } from "@/store/sessionStore";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -12,27 +9,15 @@ export default function CheckoutPage() {
   console.log(location);
 
   // Store de Usuário
-  const { id, email, isLoged, updateUser } = useSession();
+  const { usuario } = useSession();
 
   // Dados do Pacote vindo da navegação anterior
   const pacoteState = location.state?.pacote;
 
   // Estados do Formulário
-  const [metodoPagamento, setMetodoPagamento] = useState("cartao-credito"); // cartao-credito, cartao-debito, pix
+  const [metodoPagamento, setMetodoPagamento] = useState("cartao-credito");
   const [parcelas, setParcelas] = useState(1);
   const [loading, setLoading] = useState(false);
-
-  // "Prepara" o usuário ao carregar a página (Simulação de Auth)
-  useEffect(() => {
-    if (!isLoged) {
-      // Aqui estamos forçando um usuário logado para o fluxo de compra funcionar
-      updateUser({
-        id: ID_USUARIO_TESTE,
-        email: "cliente@teste.com",
-        isLoged: true,
-      });
-    }
-  }, [isLoged, updateUser]);
 
   // Se não tiver pacote selecionado, volta (proteção)
   useEffect(() => {
@@ -61,21 +46,21 @@ export default function CheckoutPage() {
 
     // Mapeamento para os Enums do Backend
     let metodoEnvio = "VISTA";
-    let processadorEnvio = "VISA"; // Default
+    let processadorEnvio = "VISA";
 
     if (metodoPagamento === "pix") {
       metodoEnvio = "VISTA";
       processadorEnvio = "PIX";
     } else if (metodoPagamento === "cartao-credito") {
       metodoEnvio = parcelas > 1 ? "PARCELADO" : "VISTA";
-      processadorEnvio = "MASTERCARD"; // Exemplo, poderia vir de um select de bandeira
+      processadorEnvio = "MASTERCARD";
     } else if (metodoPagamento === "cartao-debito") {
       metodoEnvio = "VISTA";
       processadorEnvio = "VISA";
     }
 
     const payload = {
-      usuarioId: id || ID_USUARIO_TESTE, // Garante o ID
+      usuarioId: usuario?.id,
       pacoteId: pacoteState.id,
       metodo: metodoEnvio,
       processador: processadorEnvio,
@@ -136,10 +121,7 @@ export default function CheckoutPage() {
               </h2>
               <div className="space-y-2">
                 <p>
-                  <strong>Email:</strong> {email || "cliente@teste.com"}
-                </p>
-                <p className="text-sm text-gray-500">
-                  ID: {id || ID_USUARIO_TESTE}
+                  <strong>Email:</strong> {usuario?.email}
                 </p>
               </div>
             </div>
