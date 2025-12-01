@@ -92,7 +92,6 @@ export default function PacotesFotoLista() {
                   <p className="text-sm text-gray-500 mb-4">
                     {pct.fotos?.length || 0} fotos adicionais
                   </p>
-                  {/* Botão Editar: Ícone e texto alinhados */}
                   <button
                     onClick={() => handleEditar(pct.id)}
                     className="w-full border border-blue-600 text-blue-600 py-2 rounded hover:bg-blue-50 **flex items-center justify-center space-x-2**"

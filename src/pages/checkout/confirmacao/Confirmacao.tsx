@@ -20,10 +20,6 @@ export default function Confirmacao() {
     }).format(valor);
   };
 
-  const irParaMinhasViagens = () => {
-    navigate(`${ROUTES.VIAGEM}/visualizar`);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-8">
       <div className="max-w-md w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,7 +91,7 @@ export default function Confirmacao() {
           </div>
 
           <button
-            onClick={irParaMinhasViagens}
+            onClick={() => navigate(`${ROUTES.VIAGEM}/visualizar`)}
             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             Ver Minhas Viagens Agora

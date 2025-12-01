@@ -12,7 +12,7 @@ import Cadastro from "./pages/auth/Cadastro";
 import Login from "./pages/auth/Login";
 import ViagensCadastradas from "./pages/administracao/dropdown/pacote/listar/PacoteLista";
 import Validar from "./pages/administracao/dropdown/usuario/listar/UsuarioLista";
-import VisualizarViagem from "./pages/usuario/VisualizarViagem";
+import VisualizarViagem from "./pages/usuario/viagens/detalhe/VisualizarViagem";
 import ConfirmacaoPage from "./pages/checkout/confirmacao/Confirmacao";
 import RegistrarPacoteFoto from "./pages/administracao/dropdown/pacote/registrar/RegistrarPacoteFoto";
 import PacotesFotoLista from "./pages/administracao/dropdown/pacote/listar/PacotesFotoLista";
@@ -24,8 +24,9 @@ import RegistrarHotel from "./pages/administracao/dropdown/pacote/registrar/Regi
 import RegistrarTransporte from "./pages/administracao/dropdown/pacote/registrar/RegistrarTransporte";
 import CadastrarViagem from "./pages/administracao/dropdown/pacote/registrar/RegistrarPacote";
 import CheckoutPage from "./pages/checkout/CheckoutPage";
-import BuscarPacotes from "./pages/busca/BuscarPacotes";
-import Pacote from "./pages/busca/pacote/Pacote";
+import BuscarPacotes from "./pages/Busca/BuscarPacotes";
+import Pacote from "./pages/Busca/pacote/Pacote";
+import MinhasViagens from "./pages/usuario/viagens/MinhasViagens";
 
 const router = createBrowserRouter([
   {
@@ -49,12 +50,16 @@ const router = createBrowserRouter([
         element: <Pacote />,
       },
       {
-        path: `${ROUTES.VIAGEM}/visualizar`,
-        element: <VisualizarViagem />,
-      },
-      {
         path: ROUTES.CHECKOUT,
         element: <CheckoutPage />,
+      },
+      {
+        path: ROUTES.MINHAS_VIAGENS,
+        element: <MinhasViagens />,
+      },
+      {
+        path: ROUTES.MINHA_VIAGENS_DETALHADAS,
+        element: <VisualizarViagem />,
       },
       {
         path: ROUTES.CONFIRMACAO,
