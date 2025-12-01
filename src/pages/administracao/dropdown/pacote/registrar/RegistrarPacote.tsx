@@ -188,7 +188,7 @@ export default function RegistrarPacote() {
     };
 
     // 3. Definir URL e Método (POST ou PUT)
-    const url = modoEdicao ? `/api/publico/pacote/${id}` : "/api/pacote";
+    const url = modoEdicao ? `/api/pacote/${id}` : "/api/pacote";
     const metodo = modoEdicao ? "PUT" : "POST";
 
     try {
