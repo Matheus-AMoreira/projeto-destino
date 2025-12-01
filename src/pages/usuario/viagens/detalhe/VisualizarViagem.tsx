@@ -41,10 +41,6 @@ export default function VisualizarViagem() {
     }).format(valor);
   };
 
-  const formatarData = (data: string) => {
-    return new Date(data).toLocaleDateString("pt-BR");
-  };
-
   useEffect(() => {
     const fetchDetalhes = async () => {
       if (!id || !usuario?.accessToken) return;
@@ -191,7 +187,7 @@ export default function VisualizarViagem() {
                   <div>
                     <h3 className="text-xs text-gray-500 uppercase">Partida</h3>
                     <p className="font-semibold text-gray-900">
-                      {formatarData(viagem.dataPartida)}
+                      {viagem.dataPartida}
                     </p>
                   </div>
                 </div>
@@ -202,7 +198,7 @@ export default function VisualizarViagem() {
                   <div>
                     <h3 className="text-xs text-gray-500 uppercase">Retorno</h3>
                     <p className="font-semibold text-gray-900">
-                      {formatarData(viagem.dataRetorno)}
+                      {viagem.dataRetorno}
                     </p>
                   </div>
                 </div>
@@ -252,7 +248,7 @@ export default function VisualizarViagem() {
                       className="flex items-center space-x-2 text-gray-700"
                     >
                       <svg
-                        className="w-5 h-5 text-green-500 flex-shrink-0"
+                        className="w-5 h-5 text-green-500 shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -287,9 +283,7 @@ export default function VisualizarViagem() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Data Compra</span>
-                  <span className="text-gray-900">
-                    {formatarData(viagem.dataCompra)}
-                  </span>
+                  <span className="text-gray-900">{viagem.dataCompra}</span>
                 </div>
                 <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
                   <span className="font-semibold text-gray-900">

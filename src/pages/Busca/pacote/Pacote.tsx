@@ -56,9 +56,7 @@ export default function Pacote() {
         })
         .then((data) => {
           setPacote(data);
-          // Define a imagem principal inicial
           if (data.fotosDoPacote || data.fotosDoPacote != "") {
-            console.log(data.fotosDoPacote);
             setImagemSelecionada(data.fotosDoPacote.fotoDoPacote);
           }
           setLoading(false);

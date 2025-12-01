@@ -6,9 +6,6 @@ import { useSession } from "@/store/sessionStore";
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location);
-
-  // Store de Usuário
   const { usuario } = useSession();
 
   // Dados do Pacote vindo da navegação anterior
@@ -74,21 +71,17 @@ export default function CheckoutPage() {
         body: JSON.stringify(payload),
       });
 
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(`Erro na compra: ${result.mensagem}`);
+        throw new Error(result.mensagem);
+      }
+
       if (response.ok) {
-        const msg = await response.text();
-        // Sucesso! Redireciona para confirmação
         navigate(ROUTES.CONFIRMACAO, {
-          state: {
-            numeroPedido: msg, // Mensagem do back (ex: "Compra ... Pedido #123")
-            pacote: pacoteState.nome,
-            valor: metodoPagamento === "pix" ? valorComDescontoPix : valorTotal,
-            metodoPagamento: metodoPagamento.toUpperCase().replace("-", " "),
-            data: new Date().toLocaleDateString("pt-BR"),
-          },
+          state: { result: result.compra },
         });
-      } else {
-        const erro = await response.text();
-        alert(`Erro na compra: ${erro}`);
       }
     } catch (error) {
       console.error(error);

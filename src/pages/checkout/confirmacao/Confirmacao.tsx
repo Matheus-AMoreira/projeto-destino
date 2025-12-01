@@ -1,17 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
+import type { Compra } from "./compra";
 
 export default function Confirmacao() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const dadosCompra = location.state || {
-    numeroPedido: "PED" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-    pacote: "Pacote Premium Fernando de Noronha",
-    valor: 5000.0,
-    metodoPagamento: "PIX",
-    data: new Date().toLocaleDateString("pt-BR"),
-  };
+  const compra: Compra = location.state.result;
 
   const formatarValor = (valor: number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -49,7 +44,7 @@ export default function Confirmacao() {
             email com todos os detalhes.
           </p>
 
-          {dadosCompra.metodoPagamento === "PIX" && (
+          {compra.metodo === "PIX" && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
               <p className="text-green-700 text-sm">
                 ✅ QR Code PIX enviado para seu email!
@@ -61,37 +56,40 @@ export default function Confirmacao() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Número do Pedido:</span>
-                <span className="font-semibold">
-                  {dadosCompra.numeroPedido}
-                </span>
+                <span className="font-semibold">{compra.id}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Pacote:</span>
                 <span className="font-semibold text-right">
-                  {dadosCompra.pacote}
+                  {compra.pacote.nome}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Valor:</span>
                 <span className="font-semibold text-green-600">
-                  {formatarValor(dadosCompra.valor)}
+                  {formatarValor(compra.valorFinal)}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Método:</span>
-                <span className="font-semibold">
-                  {dadosCompra.metodoPagamento}
-                </span>
+                <span className="font-semibold">{compra.metodo}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Data:</span>
-                <span className="font-semibold">{dadosCompra.data}</span>
+                <span className="font-semibold">{compra.dataCompra}</span>
               </div>
             </div>
           </div>
 
           <button
-            onClick={() => navigate(`${ROUTES.VIAGEM}/visualizar`)}
+            onClick={() =>
+              navigate(
+                ROUTES.MINHA_VIAGENS_DETALHADAS.replace(
+                  ":id",
+                  String(compra.id)
+                )
+              )
+            }
             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
           >
             Ver Minhas Viagens Agora
