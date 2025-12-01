@@ -3,6 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useSession } from "@/store/sessionStore";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
+import { TbPlayerTrackNextFilled } from "react-icons/tb";
+import { FaHistory } from "react-icons/fa";
+import { FaGlobeAmericas } from "react-icons/fa";
+import { MdAirplaneTicket } from "react-icons/md";
+import { LuPackageSearch } from "react-icons/lu";
 
 // Interface compatível com o DTO Java ViagemResumoDTO
 interface ViagemResumo {
@@ -103,31 +109,36 @@ export default function MinhasViagens() {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg hidden md:block">
         <div className="p-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-gray-900">Minha Conta</h1>
+          <h1 className="text-xl font-bold text-gray-900 flex items-center space-x-2">
+            <FaUser className="text-xl" />
+            <span>Minha Conta</span>
+          </h1>
         </div>
 
         <nav className="p-4">
           <div className="space-y-2">
             <button
               onClick={() => navigate(ROUTES.VIAGEM)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 isViagensCompradas
                   ? "bg-blue-50 text-blue-600 border border-blue-200"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              Próximas Viagens
+              <TbPlayerTrackNextFilled className="text-xl" />
+              <span>Próximas Viagens</span>
             </button>
 
             <button
               onClick={() => navigate(`${ROUTES.VIAGEM}?concluidas`)}
-              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 isViagensConcluidas
                   ? "bg-blue-50 text-blue-600 border border-blue-200"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
             >
-              Histórico (Concluídas)
+              <FaHistory className="text-xl" />
+              <span>Histórico (Concluídas)</span>
             </button>
           </div>
         </nav>
@@ -137,8 +148,11 @@ export default function MinhasViagens() {
       <div className="flex-1 p-4 md:p-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {isViagensConcluidas ? "Histórico de Viagens" : "Minhas Viagens"}
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <FaGlobeAmericas className="text-xl" />
+              <span>
+                {isViagensConcluidas ? "Histórico de Viagens" : "Minhas Viagens"}
+              </span>
             </h1>
             <p className="text-gray-600 mt-1">
               {isViagensConcluidas
@@ -149,8 +163,8 @@ export default function MinhasViagens() {
 
           <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
             <span className="text-sm text-gray-600">
-              Total: <strong>{viagensAtivas.length}</strong> viagem
-              {viagensAtivas.length !== 1 ? "s" : ""}
+              Total: <strong>{viagensAtivas.length}</strong> viage
+              {viagensAtivas.length !== 1 ? "ns" : "m"}
             </span>
           </div>
         </div>
@@ -200,7 +214,7 @@ export default function MinhasViagens() {
                       </h3>
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-500 mb-2 gap-1">
+                    <div className="flex items-center text-sm text-gray-500 mb-2 space-x-1">
                       <FaMapMarkerAlt className="text-red-500" />
                       <span>
                         {viagem.cidade} - {viagem.estado}
@@ -253,7 +267,10 @@ export default function MinhasViagens() {
             {/* Empty State */}
             {viagensAtivas.length === 0 && (
               <div className="text-center py-16 bg-white rounded-lg border border-dashed border-gray-300">
-                <div className="text-5xl mb-4">✈️</div>
+                {/* ALTERAÇÃO AQUI: Aumentado de text-5xl para text-7xl para maior destaque */}
+                <div className="text-7xl mb-4 text-gray-400 mx-auto w-fit"> 
+                  <MdAirplaneTicket />
+                </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {isViagensConcluidas
                     ? "Nenhuma viagem no histórico"
@@ -266,10 +283,12 @@ export default function MinhasViagens() {
                 </p>
                 {!isViagensConcluidas && (
                   <button
-                    onClick={() => navigate("/")}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                    onClick={() => navigate("/pacotes")}
+                    // Alinhamento do ícone e texto e hover verde adicionado
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors flex items-center space-x-2 mx-auto"
                   >
-                    Explorar Pacotes
+                    <LuPackageSearch className="text-xl" />
+                    <span>Explorar Pacotes</span>
                   </button>
                 )}
               </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // 💡 Importar useLocation
 import { ROUTES } from "@/paths";
 import PacoteCard, { type Pacote } from "@/components/busca/PacoteCard";
 import logo from "/icon.png";
@@ -10,6 +10,10 @@ import { PiPackageBold } from "react-icons/pi";
 
 export default function BuscarPacotes() {
   const navigate = useNavigate();
+  const location = useLocation(); // 💡 Usar useLocation
+
+  // Extrai o termo de busca inicial do state, se existir
+  const termoBuscaInicial = (location.state as { termoBuscaInicial?: string })?.termoBuscaInicial || "";
 
   const [pacotes, setPacotes] = useState<Pacote[]>([]);
   const [topPacotes, setTopPacotes] = useState<Pacote[]>([]);
@@ -17,10 +21,12 @@ export default function BuscarPacotes() {
   const [loading, setLoading] = useState(true);
   const [erro, setError] = useState("");
 
-  const [termoBusca, setTermoBusca] = useState("");
+  // 💡 Inicializa o termoBusca com o valor recebido do state (ou string vazia)
+  const [termoBusca, setTermoBusca] = useState(termoBuscaInicial);
   const [filtroPrecoMaximo, setFiltroPrecoMaximo] = useState<number | "">("");
 
   useEffect(() => {
+    // ... [Restante do useEffect de busca de dados] ...
     const fetchData = async () => {
       setLoading(true);
       const [pacotesResponse, topPacotesResponse] = await Promise.all([
@@ -76,6 +82,8 @@ export default function BuscarPacotes() {
     return listaFiltrada;
   };
 
+  // Como o `termoBusca` é inicializado com o valor do state e o filtro depende
+  // de `termoBusca`, o resultado já será filtrado na primeira renderização.
   const pacotesFiltrados = aplicarFiltros(pacotes);
 
   const handlePrecoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,12 +93,13 @@ export default function BuscarPacotes() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* ... [Sidebar e demais elementos] ... */}
       <div className="w-80 bg-white shadow-lg shrink-0 hidden lg:block">
           <div className="flex justify-center md:w-2.1 pt-5">
           <img
             src={logo}
             alt="logo"
-            className="max-w-[250px] rounded-xl shadow-lg object-contain p-3"
+            className="max-w-[300px] rounded-xl shadow-lg object-contain p-3"
           />
         </div>
         <nav className="p-6 space-y-8">
