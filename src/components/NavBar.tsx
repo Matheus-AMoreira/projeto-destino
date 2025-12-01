@@ -36,7 +36,9 @@ export default function Navbar() {
         )}
         {session.isLoged ? (
           <span className="text-white font-bold flex">
-            Usuário: {session.usuario?.nomeCompleto}
+            <Link to={ROUTES.MINHAS_VIAGENS}>
+              Usuário: {session.usuario?.nomeCompleto}
+            </Link>
             <p className="ml-2">|</p>
             <button
               className="text-(--navbar-blue-text) hover:underline hover:cursor-pointer ml-2"

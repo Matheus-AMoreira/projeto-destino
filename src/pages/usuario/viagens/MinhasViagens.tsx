@@ -1,0 +1,282 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ROUTES } from "@/paths";
+import { useSession } from "@/store/sessionStore";
+import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+
+// Interface compatível com o DTO Java ViagemResumoDTO
+interface ViagemResumo {
+  id: number;
+  pacoteId: number;
+  nomePacote: string;
+  descricao: string;
+  valor: number;
+  statusCompra: string; // PENDENTE, APROVADO, CANCELADO, ETC
+  dataPartida: string;
+  dataRetorno: string;
+  imagemCapa: string;
+  cidade: string;
+  estado: string;
+}
+
+export default function MinhasViagens() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { usuario } = useSession();
+
+  const [viagens, setViagens] = useState<ViagemResumo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const formatarValor = (valor: number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valor);
+  };
+
+  const formatarData = (data: string) => {
+    return new Date(data).toLocaleDateString("pt-BR");
+  };
+
+  useEffect(() => {
+    const fetchViagens = async () => {
+      if (!usuario?.accessToken) return;
+
+      try {
+        const response = await fetch("/api/compra", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${usuario.accessToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setViagens(data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar viagens:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchViagens();
+  }, [usuario]);
+
+  // Lógica para separar Compradas (Futuras/Atuais) vs Concluídas (Passadas)
+  const hoje = new Date();
+
+  const viagensConcluidas = viagens.filter(
+    (v) => new Date(v.dataRetorno) < hoje
+  );
+  const viagensCompradas = viagens.filter(
+    (v) => new Date(v.dataRetorno) >= hoje
+  );
+
+  // Determina qual aba está ativa
+  const isViagensConcluidas = location.search === "?concluidas";
+  const isViagensCompradas = !isViagensConcluidas;
+
+  // Seleciona as viagens baseado na aba ativa
+  const viagensAtivas = isViagensConcluidas
+    ? viagensConcluidas
+    : viagensCompradas;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "APROVADO":
+      case "CONFIRMADA":
+        return "bg-green-100 text-green-800";
+      case "PENDENTE":
+        return "bg-yellow-100 text-yellow-800";
+      case "CANCELADO":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-lg hidden md:block">
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-xl font-bold text-gray-900">Minha Conta</h1>
+        </div>
+
+        <nav className="p-4">
+          <div className="space-y-2">
+            <button
+              onClick={() => navigate(ROUTES.VIAGEM)}
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+                isViagensCompradas
+                  ? "bg-blue-50 text-blue-600 border border-blue-200"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              Próximas Viagens
+            </button>
+
+            <button
+              onClick={() => navigate(`${ROUTES.VIAGEM}?concluidas`)}
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+                isViagensConcluidas
+                  ? "bg-blue-50 text-blue-600 border border-blue-200"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              Histórico (Concluídas)
+            </button>
+          </div>
+        </nav>
+      </div>
+
+      {/* Conteúdo Principal */}
+      <div className="flex-1 p-4 md:p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">
+              {isViagensConcluidas ? "Histórico de Viagens" : "Minhas Viagens"}
+            </h1>
+            <p className="text-gray-600 mt-1">
+              {isViagensConcluidas
+                ? "Relembre suas aventuras passadas"
+                : "Gerencie suas próximas aventuras"}
+            </p>
+          </div>
+
+          <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm">
+            <span className="text-sm text-gray-600">
+              Total: <strong>{viagensAtivas.length}</strong> viagem
+              {viagensAtivas.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          </div>
+        ) : (
+          <>
+            {/* Grid de Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {viagensAtivas.map((viagem) => (
+                <div
+                  key={viagem.id}
+                  className="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden flex flex-col"
+                >
+                  {/* Imagem de Capa */}
+                  <div className="h-48 bg-gray-200 relative">
+                    {viagem.imagemCapa ? (
+                      <img
+                        src={viagem.imagemCapa}
+                        alt={viagem.nomePacote}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        Sem imagem
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-bold shadow-sm ${getStatusColor(
+                          viagem.statusCompra
+                        )}`}
+                      >
+                        {viagem.statusCompra}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Conteúdo */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-bold text-gray-900 line-clamp-1">
+                        {viagem.nomePacote}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center text-sm text-gray-500 mb-2 gap-1">
+                      <FaMapMarkerAlt className="text-red-500" />
+                      <span>
+                        {viagem.cidade} - {viagem.estado}
+                      </span>
+                    </div>
+
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">
+                      {viagem.descricao}
+                    </p>
+
+                    <div className="space-y-3 mt-auto">
+                      <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded">
+                        <FaCalendarAlt className="mr-2 text-blue-500" />
+                        <span>
+                          {formatarData(viagem.dataPartida)} -{" "}
+                          {formatarData(viagem.dataRetorno)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between border-t pt-3">
+                        <div>
+                          <span className="text-xs text-gray-500 block">
+                            Valor Pago
+                          </span>
+                          <span className="text-lg font-bold text-blue-600">
+                            {formatarValor(viagem.valor)}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            navigate(
+                              ROUTES.MINHA_VIAGENS_DETALHADAS.replace(
+                                ":id",
+                                String(viagem.id)
+                              )
+                            )
+                          }
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+                        >
+                          Ver Detalhes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Empty State */}
+            {viagensAtivas.length === 0 && (
+              <div className="text-center py-16 bg-white rounded-lg border border-dashed border-gray-300">
+                <div className="text-5xl mb-4">✈️</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {isViagensConcluidas
+                    ? "Nenhuma viagem no histórico"
+                    : "Nenhuma viagem agendada"}
+                </h3>
+                <p className="text-gray-500 mb-6">
+                  {isViagensConcluidas
+                    ? "Suas viagens realizadas aparecerão aqui."
+                    : "Que tal planejar sua próxima aventura agora?"}
+                </p>
+                {!isViagensConcluidas && (
+                  <button
+                    onClick={() => navigate("/")}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Explorar Pacotes
+                  </button>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

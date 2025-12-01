@@ -1,6 +1,7 @@
 export const ROTAS_BASE = {
   PACOTES: `/pacotes`,
   ADMINISTRACAO: `/administracao`,
+  VIAGEM: `/viagens`,
 };
 
 export const ROUTES = {
@@ -44,4 +45,6 @@ export const ROUTES = {
 
   //Usuario
   LISTAR_USUARIOS: `${ROTAS_BASE.ADMINISTRACAO}/usuarios`,
+  MINHAS_VIAGENS: `${ROTAS_BASE.VIAGEM}`,
+  MINHA_VIAGENS_DETALHADAS: `${ROTAS_BASE.VIAGEM}/detalhe/:id`,
 };
