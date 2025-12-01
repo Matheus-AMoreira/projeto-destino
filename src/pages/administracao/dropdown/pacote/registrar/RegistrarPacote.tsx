@@ -1,6 +1,19 @@
 import { useSession } from "@/store/sessionStore";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaMapMarkedAlt } from "react-icons/fa";
+import { TbPencilPin } from "react-icons/tb";
+import { FaMoneyCheckAlt } from "react-icons/fa";
+import { MdDiversity3 } from "react-icons/md";
+import { HiMiniCamera } from "react-icons/hi2";
+import { FaHotel } from "react-icons/fa6";
+import { FaTruckPlane } from "react-icons/fa6";
+import { MdDescription } from "react-icons/md";
+import { FaTags } from "react-icons/fa6";
+import { TbCalendarUp } from "react-icons/tb";
+import { TbCalendarRepeat } from "react-icons/tb";
+import { LuPackageX } from "react-icons/lu";
+import { LuPackagePlus } from "react-icons/lu";
 
 interface Hotel {
   id: number;
@@ -53,18 +66,15 @@ interface DadosFormulario {
 export default function RegistrarPacote() {
   const navigate = useNavigate();
   const { usuario } = useSession();
-  const { id } = useParams<{ id: string }>(); // Se existir ID, é modo de edição
+  const { id } = useParams<{ id: string }>();
 
-  // --- Estados de Dados Auxiliares (Listas para os Selects) ---
   const [listaHoteis, setListaHoteis] = useState<Hotel[]>([]);
   const [listaTransportes, setListaTransportes] = useState<Transporte[]>([]);
   const [listaFotos, setListaFotos] = useState<PacoteFoto[]>([]);
 
-  // --- Estados de Controle ---
   const [carregando, setCarregando] = useState(true);
   const [modoEdicao, setModoEdicao] = useState(false);
 
-  // --- Estado do Formulário ---
   const [formulario, setFormulario] = useState<DadosFormulario>({
     nome: "",
     valor: 0,
@@ -78,17 +88,14 @@ export default function RegistrarPacote() {
     pacoteFotoId: "",
   });
 
-  // --- 1. Efeito Principal: Carregamento de Dados ---
   useEffect(() => {
     const carregarDadosIniciais = async () => {
       if (!usuario?.accessToken) return;
 
       setCarregando(true);
       try {
-        // Passo A: Buscar as listas necessárias para os selects
         await buscarListasAuxiliares();
 
-        // Passo B: Se houver ID na URL, buscar dados do pacote para preencher
         if (id) {
           setModoEdicao(true);
           await buscarDadosDoPacoteParaEdicao(id);
@@ -103,8 +110,6 @@ export default function RegistrarPacote() {
 
     carregarDadosIniciais();
   }, [id, usuario]);
-
-  // --- Funções Auxiliares de Fetch ---
 
   const buscarListasAuxiliares = async () => {
     const headers = {
@@ -134,8 +139,6 @@ export default function RegistrarPacote() {
 
     const dadosPacote: PacoteDetalhes = await response.json();
 
-    // Passo C: Mapear o objeto recebido para o formato do formulário
-    // Aqui extraímos os IDs dos objetos aninhados (hotel, transporte, fotos)
     setFormulario({
       nome: dadosPacote.nome,
       valor: dadosPacote.preco,
@@ -145,21 +148,17 @@ export default function RegistrarPacote() {
       disponibilidade: dadosPacote.disponibilidade,
       tags: Array.isArray(dadosPacote.tags) ? dadosPacote.tags.join(", ") : "",
 
-      // Extrair IDs ou deixar vazio
       hotelId: dadosPacote.hotel?.id || "",
       transporteId: dadosPacote.transporte?.id || "",
       pacoteFotoId: dadosPacote.fotosDoPacote?.id || "",
     });
   };
 
-  // --- Manipuladores de Eventos ---
-
   const aoMudarInput = (campo: keyof DadosFormulario, valor: any) => {
     setFormulario((prev) => ({ ...prev, [campo]: valor }));
   };
 
   const aoSalvar = async () => {
-    // 1. Validação Básica
     if (
       !formulario.nome.trim() ||
       !formulario.hotelId ||
@@ -169,7 +168,6 @@ export default function RegistrarPacote() {
       return;
     }
 
-    // 2. Montar Payload (Objeto de envio)
     const payload = {
       nome: formulario.nome,
       descricao: formulario.descricao,
@@ -181,13 +179,12 @@ export default function RegistrarPacote() {
         .split(",")
         .map((t) => t.trim())
         .filter((t) => t !== ""),
-      hotel: Number(formulario.hotelId), // Envia apenas o ID
-      transporte: Number(formulario.transporteId), // Envia apenas o ID
-      pacoteFoto: Number(formulario.pacoteFotoId), // Envia apenas o ID
+      hotel: Number(formulario.hotelId),
+      transporte: Number(formulario.transporteId),
+      pacoteFoto: Number(formulario.pacoteFotoId),
       funcionario: usuario?.id,
     };
 
-    // 3. Definir URL e Método (POST ou PUT)
     const url = modoEdicao ? `/api/pacote/${id}` : "/api/pacote";
     const metodo = modoEdicao ? "PUT" : "POST";
 
@@ -207,7 +204,7 @@ export default function RegistrarPacote() {
             ? "Pacote atualizado com sucesso!"
             : "Pacote cadastrado com sucesso!"
         );
-        navigate(-1); // Volta para a tela anterior
+        navigate(-1);
       } else {
         const erroMsg = await response.text();
         alert(`Erro ao salvar: ${erroMsg}`);
@@ -217,8 +214,6 @@ export default function RegistrarPacote() {
       alert("Erro de conexão com o servidor.");
     }
   };
-
-  // --- Renderização ---
 
   if (carregando) {
     return (
@@ -230,35 +225,22 @@ export default function RegistrarPacote() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Cabeçalho */}
-      <div className="max-w-4xl mx-auto px-4 mb-8 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900">Gestão de Viagens</h1>
-        <span
-          className={`px-3 py-1 rounded-full text-sm font-medium ${
-            modoEdicao
-              ? "bg-orange-100 text-orange-800 border border-orange-200"
-              : "bg-blue-100 text-blue-800 border border-blue-200"
-          }`}
-        >
-          {modoEdicao ? "✏️ Editando Pacote" : "➕ Novo Pacote"}
-        </span>
-      </div>
-
-      {/* Cartão do Formulário */}
       <div className="max-w-4xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
           <div className="mb-6 border-b border-gray-100 pb-4">
-            <h2 className="text-xl font-semibold text-gray-800">
-              {modoEdicao
-                ? `Editar: ${formulario.nome}`
-                : "Informações do Pacote"}
-            </h2>
+            {/* Título - Alinhado */}
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center space-x-2">
+              <FaMapMarkedAlt className="text-xl" />
+              <span>{modoEdicao ? "Editar Pacote" : "Adicionar Pacote"}</span>
+            </h1>
           </div>
 
           {/* Nome */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nome do Pacote
+            {/* Label - Alinhado */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+              <TbPencilPin className="text-lg" />
+              <span>Nome do Pacote</span>
             </label>
             <input
               type="text"
@@ -272,8 +254,10 @@ export default function RegistrarPacote() {
           {/* Preço e Vagas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Preço Total (R$)
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <FaMoneyCheckAlt className="text-lg" />
+                <span>Preço Total (R$)</span>
               </label>
               <input
                 type="number"
@@ -286,8 +270,10 @@ export default function RegistrarPacote() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Vagas Disponíveis
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <MdDiversity3 className="text-lg" />
+                <span>Vagas Disponíveis</span>
               </label>
               <input
                 type="number"
@@ -303,8 +289,10 @@ export default function RegistrarPacote() {
           {/* Selects: Hotel, Transporte, Fotos */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 bg-gray-50 p-4 rounded-lg border border-gray-100">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                🏨 Hotel
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <FaHotel className="text-lg" />
+                <span>Hotel</span>
               </label>
               <select
                 value={formulario.hotelId}
@@ -323,8 +311,10 @@ export default function RegistrarPacote() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                ✈️ Transporte
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <FaTruckPlane className="text-lg" />
+                <span>Transporte</span>
               </label>
               <select
                 value={formulario.transporteId}
@@ -343,8 +333,10 @@ export default function RegistrarPacote() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                📸 Fotos Promocionais
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <HiMiniCamera className="text-lg" />
+                <span>Fotos Promocionais</span>
               </label>
               <select
                 value={formulario.pacoteFotoId}
@@ -365,8 +357,10 @@ export default function RegistrarPacote() {
 
           {/* Descrição */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Descrição Detalhada
+            {/* Label - Alinhado */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+              <MdDescription className="text-lg" />
+              <span>Descrição Detalhada</span>
             </label>
             <textarea
               rows={4}
@@ -378,8 +372,10 @@ export default function RegistrarPacote() {
 
           {/* Tags */}
           <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Tags (separadas por vírgula)
+            {/* Label - Alinhado */}
+            <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+              <FaTags className="text-lg" />
+              <span>Tags (separação por VÍRGULA)</span>
             </label>
             <input
               type="text"
@@ -393,8 +389,10 @@ export default function RegistrarPacote() {
           {/* Datas */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data de Ida
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <TbCalendarUp className="text-lg" />
+                <span>Data de Ida</span>
               </label>
               <input
                 type="date"
@@ -404,8 +402,10 @@ export default function RegistrarPacote() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data de Volta
+              {/* Label - Alinhado */}
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center space-x-1">
+                <TbCalendarRepeat className="text-lg" />
+                <span>Data de Volta</span>
               </label>
               <input
                 type="date"
@@ -418,21 +418,21 @@ export default function RegistrarPacote() {
 
           {/* Botões de Ação */}
           <div className="flex justify-end pt-6 border-t border-gray-200 gap-3">
+            {/* BOTÃO CANCELAR: Azul com hover Vermelho */}
             <button
               onClick={() => navigate(-1)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-md transition-colors hover:bg-red-700 flex items-center space-x-1"
             >
-              Cancelar
+              <LuPackageX className="text-lg" />
+              <span>Cancelar</span>
             </button>
+            {/* BOTÃO SALVAR: Azul com hover Verde */}
             <button
               onClick={aoSalvar}
-              className={`px-6 py-3 text-white rounded-lg font-bold shadow-md transition-colors ${
-                modoEdicao
-                  ? "bg-orange-600 hover:bg-orange-700"
-                  : "bg-blue-600 hover:bg-blue-700"
-              }`}
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-md transition-colors hover:bg-green-700 flex items-center space-x-1"
             >
-              {modoEdicao ? "Salvar Alterações" : "Cadastrar Viagem"}
+              <LuPackagePlus className="text-lg" />
+              <span>{modoEdicao ? "Salvar Alterações" : "Cadastrar Pacote"}</span>
             </button>
           </div>
         </div>
