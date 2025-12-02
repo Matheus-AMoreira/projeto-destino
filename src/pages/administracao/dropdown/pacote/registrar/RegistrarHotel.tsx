@@ -236,7 +236,7 @@ export default function RegistrarHotel() {
           />
         </div>
 
-        <div>
+        <div className="pb-2">
           <label className="block text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
             <FaMoneyCheckAlt className="text-lg" />
             <span>Diária (R$)</span>
@@ -248,8 +248,9 @@ export default function RegistrarHotel() {
             className={inputStyle}
           />
         </div>
-
-        <div className="border-t pt-4 mt-4">
+        
+        <div className="border-t border-gray-200 my-6"></div>
+        <div className="pt-4 mt-4">
           <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-gray-900">
             <RiTreasureMapFill className="text-xl" />
             <span>LOCALIZAÇÃO</span>

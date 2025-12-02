@@ -3,10 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useSession } from "@/store/sessionStore";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
-import { FaUser } from "react-icons/fa";
+import { FaUser, FaHistory, FaGlobeAmericas } from "react-icons/fa";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
-import { FaHistory } from "react-icons/fa";
-import { FaGlobeAmericas } from "react-icons/fa";
 import { MdAirplaneTicket } from "react-icons/md";
 import { LuPackageSearch } from "react-icons/lu";
 
@@ -82,7 +80,7 @@ export default function MinhasViagens() {
   );
 
   // Determina qual aba está ativa
-  const isViagensConcluidas = location.search === "?concluidas";
+  const isViagensConcluidas = location.search.includes("concluidas");
   const isViagensCompradas = !isViagensConcluidas;
 
   // Seleciona as viagens baseado na aba ativa
@@ -92,6 +90,8 @@ export default function MinhasViagens() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "CONCLUIDA":
+        return "bg-gray-200 text-gray-700";
       case "APROVADO":
       case "CONFIRMADA":
         return "bg-green-100 text-green-800";
@@ -102,6 +102,34 @@ export default function MinhasViagens() {
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  // Função para verificar se a viagem está concluída e retornar status apropriado
+  const getStatusDisplay = (viagem: ViagemResumo) => {
+    const hoje = new Date();
+    const dataRetorno = new Date(viagem.dataRetorno);
+    
+    // Se estiver na aba de concluídas OU se a data de retorno já passou
+    if (isViagensConcluidas || dataRetorno < hoje) {
+      return "CONCLUIDA";
+    }
+    return viagem.statusCompra;
+  };
+
+  // Verifica se uma viagem está concluída para aplicar estilos
+  const isViagemConcluida = (viagem: ViagemResumo) => {
+    const dataRetorno = new Date(viagem.dataRetorno);
+    const hoje = new Date();
+    return dataRetorno < hoje;
+  };
+
+  // Funções de navegação - IMPORTANTE: usando ROUTES.MINHAS_VIAGENS
+  const handleProximasViagens = () => {
+    navigate(ROUTES.MINHAS_VIAGENS); // Vai para /viagens
+  };
+
+  const handleHistorico = () => {
+    navigate(`${ROUTES.MINHAS_VIAGENS}?concluidas`); // Vai para /viagens?concluidas
   };
 
   return (
@@ -118,7 +146,7 @@ export default function MinhasViagens() {
         <nav className="p-4">
           <div className="space-y-2">
             <button
-              onClick={() => navigate(ROUTES.VIAGEM)}
+              onClick={handleProximasViagens}
               className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 isViagensCompradas
                   ? "bg-blue-50 text-blue-600 border border-blue-200"
@@ -130,7 +158,7 @@ export default function MinhasViagens() {
             </button>
 
             <button
-              onClick={() => navigate(`${ROUTES.VIAGEM}?concluidas`)}
+              onClick={handleHistorico}
               className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors flex items-center space-x-2 ${
                 isViagensConcluidas
                   ? "bg-blue-50 text-blue-600 border border-blue-200"
@@ -177,97 +205,129 @@ export default function MinhasViagens() {
           <>
             {/* Grid de Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {viagensAtivas.map((viagem) => (
-                <div
-                  key={viagem.id}
-                  className="bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow overflow-hidden flex flex-col"
-                >
-                  {/* Imagem de Capa */}
-                  <div className="h-48 bg-gray-200 relative">
-                    {viagem.imagemCapa ? (
-                      <img
-                        src={viagem.imagemCapa}
-                        alt={viagem.nomePacote}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Sem imagem
+              {viagensAtivas.map((viagem) => {
+                const statusDisplay = getStatusDisplay(viagem);
+                const isConcluida = isViagensConcluidas || isViagemConcluida(viagem);
+                
+                return (
+                  <div
+                    key={viagem.id}
+                    className={`rounded-lg shadow-md border transition-shadow overflow-hidden flex flex-col ${
+                      isConcluida 
+                        ? "bg-gray-50 border-gray-300 opacity-90" 
+                        : "bg-white border-gray-200 hover:shadow-lg"
+                    }`}
+                  >
+                    {/* Imagem de Capa com efeito cinza para concluídas */}
+                    <div className="h-48 bg-gray-200 relative">
+                      {viagem.imagemCapa ? (
+                        <div className="relative w-full h-full">
+                          <img
+                            src={viagem.imagemCapa}
+                            alt={viagem.nomePacote}
+                            className={`w-full h-full object-cover ${
+                              isConcluida ? "filter grayscale-30 opacity-80" : ""
+                            }`}
+                          />
+                          {/* Overlay cinza para concluídas */}
+                          {isConcluida && (
+                            <div className="absolute inset-0 bg-gray-400 bg-opacity-20"></div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          Sem imagem
+                        </div>
+                      )}
+                      <div className="absolute top-2 right-2">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-bold shadow-sm ${getStatusColor(
+                            statusDisplay
+                          )}`}
+                        >
+                          {statusDisplay}
+                        </span>
                       </div>
-                    )}
-                    <div className="absolute top-2 right-2">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-bold shadow-sm ${getStatusColor(
-                          viagem.statusCompra
-                        )}`}
-                      >
-                        {viagem.statusCompra}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Conteúdo */}
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="text-xl font-bold text-gray-900 line-clamp-1">
-                        {viagem.nomePacote}
-                      </h3>
                     </div>
 
-                    <div className="flex items-center text-sm text-gray-500 mb-2 space-x-1">
-                      <FaMapMarkerAlt className="text-red-500" />
-                      <span>
-                        {viagem.cidade} - {viagem.estado}
-                      </span>
-                    </div>
+                    {/* Conteúdo do Card */}
+                    <div className={`p-6 flex-1 flex flex-col ${isConcluida ? "bg-gray-50" : ""}`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className={`text-xl font-bold line-clamp-1 ${
+                          isConcluida ? "text-gray-700" : "text-gray-900"
+                        }`}>
+                          {viagem.nomePacote}
+                        </h3>
+                      </div>
 
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">
-                      {viagem.descricao}
-                    </p>
-
-                    <div className="space-y-3 mt-auto">
-                      <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded">
-                        <FaCalendarAlt className="mr-2 text-blue-500" />
-                        <span>
-                          {formatarData(viagem.dataPartida)} -{" "}
-                          {formatarData(viagem.dataRetorno)}
+                      <div className="flex items-center text-sm mb-2 space-x-1">
+                        <FaMapMarkerAlt className={isConcluida ? "text-gray-500" : "text-red-500"} />
+                        <span className={isConcluida ? "text-gray-600" : "text-gray-500"}>
+                          {viagem.cidade} - {viagem.estado}
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between border-t pt-3">
-                        <div>
-                          <span className="text-xs text-gray-500 block">
-                            Valor Pago
-                          </span>
-                          <span className="text-lg font-bold text-blue-600">
-                            {formatarValor(viagem.valor)}
+                      <p className={`text-sm mb-4 line-clamp-2 flex-1 ${
+                        isConcluida ? "text-gray-600" : "text-gray-600"
+                      }`}>
+                        {viagem.descricao}
+                      </p>
+
+                      <div className="space-y-3 mt-auto">
+                        <div className={`flex items-center text-sm p-2 rounded ${
+                          isConcluida 
+                            ? "text-gray-600 bg-gray-100" 
+                            : "text-gray-600 bg-gray-50"
+                        }`}>
+                          <FaCalendarAlt className={`mr-2 ${isConcluida ? "text-gray-500" : "text-blue-500"}`} />
+                          <span>
+                            {formatarData(viagem.dataPartida)} -{" "}
+                            {formatarData(viagem.dataRetorno)}
                           </span>
                         </div>
 
-                        <button
-                          onClick={() =>
-                            navigate(
-                              ROUTES.MINHA_VIAGENS_DETALHADAS.replace(
-                                ":id",
-                                String(viagem.id)
+                        <div className="flex items-center justify-between border-t pt-3">
+                          <div>
+                            <span className={`text-xs block ${
+                              isConcluida ? "text-gray-500" : "text-gray-500"
+                            }`}>
+                              Valor Pago
+                            </span>
+                            <span className={`text-lg font-bold ${
+                              isConcluida ? "text-gray-700" : "text-blue-600"
+                            }`}>
+                              {formatarValor(viagem.valor)}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={() =>
+                              navigate(
+                                ROUTES.MINHA_VIAGENS_DETALHADAS.replace(
+                                  ":id",
+                                  String(viagem.id)
+                                )
                               )
-                            )
-                          }
-                          className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
-                        >
-                          Ver Detalhes
-                        </button>
+                            }
+                            className={`px-4 py-2 rounded-lg font-medium transition-colors text-sm ${
+                              isConcluida
+                                ? "bg-gray-600 text-white hover:bg-gray-700"
+                                : "bg-blue-600 text-white hover:bg-blue-700"
+                            }`}
+                          >
+                            Ver Detalhes
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Empty State */}
             {viagensAtivas.length === 0 && (
               <div className="text-center py-16 bg-white rounded-lg border border-dashed border-gray-300">
-                {/* ALTERAÇÃO AQUI: Aumentado de text-5xl para text-7xl para maior destaque */}
                 <div className="text-7xl mb-4 text-gray-400 mx-auto w-fit"> 
                   <MdAirplaneTicket />
                 </div>
@@ -283,8 +343,7 @@ export default function MinhasViagens() {
                 </p>
                 {!isViagensConcluidas && (
                   <button
-                    onClick={() => navigate("/pacotes")}
-                    // Alinhamento do ícone e texto e hover verde adicionado
+                    onClick={() => navigate(ROUTES.BUSCAR_PACOTES)}
                     className="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors flex items-center space-x-2 mx-auto"
                   >
                     <LuPackageSearch className="text-xl" />
