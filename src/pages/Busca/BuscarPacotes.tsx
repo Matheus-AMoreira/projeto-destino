@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import PacoteCard, { type Pacote } from "@/components/busca/PacoteCard";
 import logo from "/icon.png";
 import { FaMoneyCheckAlt } from "react-icons/fa";
@@ -8,7 +8,6 @@ import { FaFireAlt } from "react-icons/fa";
 import { PiPackageBold } from "react-icons/pi";
 
 export default function BuscarPacotes() {
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Extrai o termo de busca inicial do state, se existir
@@ -93,14 +92,15 @@ export default function BuscarPacotes() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* ... [Sidebar e demais elementos] ... */}
       <div className="w-80 bg-white shadow-lg shrink-0 hidden lg:block">
-        <div className="flex justify-center md:w-2.1 pt-5">
-          <img
-            src={logo}
-            alt="logo"
-            className="max-w-[300px] rounded-xl shadow-lg object-contain p-3"
-          />
+        <div className="flex justify-center pt-3">
+          <div className="w-4/5">
+            <img
+              src={logo}
+              alt="logo"
+              className="w-full rounded-xl shadow-lg object-contain p-3"
+            />
+          </div>
         </div>
         <nav className="p-6 space-y-8">
           <div>

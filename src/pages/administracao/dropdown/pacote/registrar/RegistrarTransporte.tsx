@@ -48,9 +48,9 @@ export default function RegistrarTransporte() {
     if (isEditing) {
       editar();
     } else {
-      setLoading(false); // Adicionado para garantir que o formulário carregue quando não está editando
+      setLoading(false);
     }
-  }, [id, isEditing, usuario]); // Adicionado 'usuario' nas dependências
+  }, [id, isEditing, usuario]);
 
   const handleSalvar = async () => {
     if (!empresa) {
@@ -92,7 +92,6 @@ export default function RegistrarTransporte() {
 
   if (loading) return <div className="p-8">Carregando...</div>;
 
-  // Estilo unificado para inputs e selects, incluindo cinza escuro no texto
   const inputStyle =
     "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-gray-800";
 
@@ -105,7 +104,7 @@ export default function RegistrarTransporte() {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
+          <label className="text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
             <TbBuildingAirport className="text-lg text-gray-600" />
             <span>Empresa</span>
           </label>
@@ -120,7 +119,7 @@ export default function RegistrarTransporte() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
+            <label className="text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
               <MdLocalShipping className="text-lg text-gray-600" />
               <span>Meio de Transporte</span>
             </label>
@@ -135,7 +134,7 @@ export default function RegistrarTransporte() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
+            <label className="text-sm font-medium mb-1 flex items-center space-x-2 text-gray-700">
               <FaMoneyCheckAlt className="text-lg text-gray-600" />
               <span>Custo Base (R$)</span>
             </label>
