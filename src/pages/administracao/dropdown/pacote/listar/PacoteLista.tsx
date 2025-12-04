@@ -78,9 +78,8 @@ export default function PacoteLista() {
     navigate(ROUTES.EDITAR_VIAGEM.replace(":id", String(viagemId)));
   };
 
-  const handleVisualizar = (viagemId: number) => {
-    // Rota pública para visualizar como ficou
-    navigate(ROUTES.PACOTE_DETALHES.replace(":id", String(viagemId)));
+  const handleVisualizar = (PacoteNome: string) => {
+    navigate(ROUTES.PACOTE_DETALHES.replace(":nome", PacoteNome));
   };
 
   const getStatusBadge = (status: string) => {
@@ -192,7 +191,7 @@ export default function PacoteLista() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleVisualizar(pacote.id);
+                                handleVisualizar(pacote.nome);
                               }}
                               className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
                             >

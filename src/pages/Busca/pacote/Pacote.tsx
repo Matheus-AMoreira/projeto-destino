@@ -218,7 +218,7 @@ export default function Pacote() {
                       <FaTreeCity className="text-xl" />
                     </span>
                     <span>
-                      {pacote.hotel?.cidade?.nome} -
+                      {pacote.hotel?.cidade?.nome} -{" "}
                       {pacote.hotel?.cidade?.estado?.sigla}
                     </span>
                   </div>
@@ -227,7 +227,7 @@ export default function Pacote() {
                       <FaCalendarAlt className="text-xl" />
                     </span>
                     <span>
-                      {formatarData(pacote.inicio)} até
+                      {formatarData(pacote.inicio)} até{" "}
                       {formatarData(pacote.fim)}
                     </span>
                   </div>

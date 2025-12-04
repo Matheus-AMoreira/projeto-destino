@@ -92,7 +92,7 @@ export default function UsuarioLista() {
   const usuarioActions = [
     {
       name: "Validar",
-      colorClass: "text-white bg-blue-600 hover:bg-blue-700",
+      colorClass: "text-white bg-blue-600 hover:bg-blue-800",
       handler: ValidarUsuario,
     },
   ];

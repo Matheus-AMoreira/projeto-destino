@@ -421,7 +421,7 @@ export default function RegistrarPacote() {
             {/* BOTÃO CANCELAR: Azul com hover Vermelho */}
             <button
               onClick={() => navigate(-1)}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-md transition-colors hover:bg-red-700 flex items-center space-x-1"
+              className="px-6 py-3 text-white bg-red-600 hover:bg-red-800 rounded-lg font-bold shadow-md transition-colors flex items-center space-x-1"
             >
               <LuPackageX className="text-lg" />
               <span>Cancelar</span>
@@ -429,10 +429,12 @@ export default function RegistrarPacote() {
             {/* BOTÃO SALVAR: Azul com hover Verde */}
             <button
               onClick={aoSalvar}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-bold shadow-md transition-colors hover:bg-green-700 flex items-center space-x-1"
+              className="px-6 py-3 text-white bg-blue-600 hover:bg-blue-800 rounded-lg font-bold shadow-md transition-colors flex items-center space-x-1"
             >
               <LuPackagePlus className="text-lg" />
-              <span>{modoEdicao ? "Salvar Alterações" : "Cadastrar Pacote"}</span>
+              <span>
+                {modoEdicao ? "Salvar Alterações" : "Cadastrar Pacote"}
+              </span>
             </button>
           </div>
         </div>
