@@ -1,12 +1,11 @@
 import Card from "@/components/landingPage/Card";
 import destaqueImage from "/destaque.jpg";
 import placeholder from "/placeholder.jpg";
-import { useNavigate } from "react-router-dom";
+import { createSearchParams, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/paths";
 import { useState, useEffect } from "react";
 import { MdOutlineTravelExplore } from "react-icons/md";
-
-// ... [Interface Pacote permanece igual] ...
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export interface Pacote {
   id: number;
@@ -61,33 +60,53 @@ export interface Pacote {
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [pacotes, setPacotes] = useState<Pacote[]>([]);
 
+  // States
+  const [pacotes, setPacotes] = useState<Pacote[]>([]);
   const [termoBusca, setTermoBusca] = useState("");
-  const [filtroPrecoMaximo, setFiltroPrecoMaximo] = useState<number | "">(""); // Não usado nesta página, mas mantido
+
+  // Paginação
+  const [paginaAtual, setPaginaAtual] = useState(0);
+  const [totalPaginas, setTotalPaginas] = useState(0);
+  const ITENS_POR_PAGINA = 20;
 
   useEffect(() => {
     const fetchPacotes = async () => {
       try {
-        const response = await fetch("/api/publico/pacote");
+        const response = await fetch(
+          `/api/publico/pacote?page=${paginaAtual}&size=${ITENS_POR_PAGINA}`
+        );
+
         if (response.ok) {
           const data = await response.json();
-          setPacotes(data);
+          setPacotes(data.content);
+          setTotalPaginas(data.totalPages);
         }
       } catch (error) {
         console.error("Erro ao buscar pacotes da API", error);
       }
     };
     fetchPacotes();
-  }, []);
+  }, [paginaAtual]);
 
-  // 💡 NOVA FUNÇÃO DE BUSCA:
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redireciona para a página de busca, passando o termoBusca no state
-    navigate(ROUTES.BUSCAR_PACOTES, {
-      state: { termoBuscaInicial: termoBusca },
+
+    // Cria a query string: /buscar?pacote=termo
+    navigate({
+      pathname: ROUTES.BUSCAR_PACOTES,
+      search: createSearchParams({
+        pacote: termoBusca,
+      }).toString(),
     });
+  };
+
+  const handleProximaPagina = () => {
+    if (paginaAtual < totalPaginas - 1) setPaginaAtual((prev) => prev + 1);
+  };
+
+  const handlePaginaAnterior = () => {
+    if (paginaAtual > 0) setPaginaAtual((prev) => prev - 1);
   };
 
   return (
@@ -131,15 +150,12 @@ export default function LandingPage() {
             Confira Nossos Pacotes
           </h2>
 
-          {/* 💡 INÍCIO DAS ALTERAÇÕES VISUAIS DA BARRA DE PESQUISA */}
           <div className="mb-8 max-w-2xl mx-auto px-4">
-            {/* Título com ícone */}
             <div className="flex items-center text-lg font-semibold text-gray-700 mb-2 space-x-2 justify-center">
               <MdOutlineTravelExplore className="text-xl" />
               <span>Procurar Viagens</span>
             </div>
 
-            {/* Formulário de busca: flex gap-4 para input e botão */}
             <form onSubmit={handleSearchSubmit} className="flex gap-4">
               <div className="flex-1 relative">
                 <input
@@ -160,7 +176,8 @@ export default function LandingPage() {
             </form>
           </div>
 
-          <div className="flex justify-center gap-6 flex-wrap px-4">
+          {/* Grid de Cards */}
+          <div className="flex justify-center gap-6 flex-wrap px-4 pb-8">
             {pacotes.map((data) => (
               <Card
                 key={data.id}
@@ -168,13 +185,50 @@ export default function LandingPage() {
                 description={data.descricao}
                 imageUrl={data.fotosDoPacote?.fotoDoPacote || placeholder}
                 detalhar={() =>
-                  navigate(
-                    ROUTES.PACOTE_DETALHES.replace(":id", String(data.id))
-                  )
+                  navigate(ROUTES.PACOTE_DETALHES.replace(":nome", data.nome))
                 }
               />
             ))}
+
+            {pacotes.length === 0 && (
+              <p className="text-gray-500 text-lg w-full text-center">
+                Nenhum pacote disponível no momento.
+              </p>
+            )}
           </div>
+
+          {/* Componente de Paginação */}
+          {totalPaginas > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-4 mb-8">
+              <button
+                onClick={handlePaginaAnterior}
+                disabled={paginaAtual === 0}
+                className={`p-3 rounded-full shadow-md transition ${
+                  paginaAtual === 0
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-[#2071b3] hover:bg-[#2071b3] hover:text-white"
+                }`}
+              >
+                <FaChevronLeft />
+              </button>
+
+              <span className="text-lg font-medium text-gray-700">
+                Página {paginaAtual + 1} de {totalPaginas}
+              </span>
+
+              <button
+                onClick={handleProximaPagina}
+                disabled={paginaAtual === totalPaginas - 1}
+                className={`p-3 rounded-full shadow-md transition ${
+                  paginaAtual === totalPaginas - 1
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-[#2071b3] hover:bg-[#2071b3] hover:text-white"
+                }`}
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          )}
         </section>
       </main>
     </div>

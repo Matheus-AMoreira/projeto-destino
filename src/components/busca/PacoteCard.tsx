@@ -17,8 +17,8 @@ const formatarValor = (valor: number) => {
 export default function PacoteCard({ pacote }: PacoteCardProps) {
   const navigate = useNavigate();
 
-  const handleVisualizar = (id: number) => {
-    navigate(ROUTES.PACOTE_DETALHES.replace(":id", String(id)));
+  const handleVisualizar = () => {
+    navigate(ROUTES.PACOTE_DETALHES.replace(":nome", pacote.nome));
   };
 
   const destino = pacote.hotel?.cidade?.nome || "Destino Desconhecido";
@@ -57,7 +57,7 @@ export default function PacoteCard({ pacote }: PacoteCardProps) {
             </p>
           </div>
           <button
-            onClick={() => handleVisualizar(pacote.id)}
+            onClick={() => handleVisualizar()}
             className="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100"
           >
             Detalhes
