@@ -30,37 +30,36 @@ export default function TransporteLista() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchHoteis = async () => {
-      if (!usuario || !usuario.accessToken) return;
-
-      setLoading(true);
-      try {
-        const response = await fetch("/api/transporte", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${usuario.accessToken}`,
-          },
-          credentials: "include",
-        });
-
-        if (!response.ok) throw new Error("Erro ao buscar hotéis");
-
-        const result = await response.json();
-        setTransportes(result);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (!isLoading && usuario) {
       fetchHoteis();
     }
-    setLoading(false);
   }, [usuario, isLoading]);
+
+  const fetchHoteis = async () => {
+    if (!usuario || !usuario.accessToken) return;
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/transporte", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${usuario.accessToken}`,
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) throw new Error("Erro ao buscar hotéis");
+
+      const result = await response.json();
+      setTransportes(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = (id: number) => {
     navigate(ROUTES.EDITAR_TRANSPORTE.replace(":id", String(id)));
@@ -89,12 +88,12 @@ export default function TransporteLista() {
   const transporteActions = [
     {
       name: "Editar",
-      colorClass: "text-blue-600 hover:text-blue-900",
+      colorClass: "text-white bg-blue-600 hover:bg-blue-800",
       handler: handleEdit,
     },
     {
       name: "Excluir",
-      colorClass: "text-red-600 hover:text-red-900",
+      colorClass: "text-white bg-red-600 hover:bg-red-800",
       handler: handleDelete,
     },
   ];
